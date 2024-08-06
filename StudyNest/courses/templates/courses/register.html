@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block heading %}
+<img src="{% static 'img/carousel-1.jpg' %}" alt="...">
+<div class="carousel-caption d-none d-md-block">
+  <h5 class="text-primary">Best Online Courses</h5>
+  <h1 class="display-3 text-white">Sign up</h1>
+</div>
+{% endblock heading %}
+
+{% block content %}
+<div class="body">
+    <div class="register-box">
+        <h2>Sign up</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="user-box">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+            </div>
+            <div class="user-box">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+            <div class="user-box">
+                {{ form.age.label_tag }}
+                {{ form.age }}
+            </div>
+            <div class="user-box">
+                {{ form.bio.label_tag }}
+                {{ form.bio }}
+            </div>
+            <div class="user-box">
+                {{ form.profile_picture.label_tag }}
+                {{ form.profile_picture }}
+            </div>
+            <div class="user-box">
+                {{ form.role.label_tag }}
+                {{ form.role }}
+            </div>
+            <div class="user-box">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+            </div>
+            <div class="show-pw">
+                <input type="checkbox" id="show-password1"  ><i>  Show Password</i>
+
+            </div>
+            <br>
+            <div class="user-box">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+                
+            </div>
+            <br>
+
+            <button type="submit">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                Sign up
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const showPassword1 = document.getElementById('show-password1');
+        const passwordInput1 = document.querySelector('input[name="password1"]');
+        
+        const showPassword2 = document.getElementById('show-password2');
+        const passwordInput2 = document.querySelector('input[name="password2"]');
+        
+        showPassword1.addEventListener('change', function () {
+            passwordInput1.type = this.checked ? 'text' : 'password';
+        });
+        
+        showPassword2.addEventListener('change', function () {
+            passwordInput2.type = this.checked ? 'text' : 'password';
+        });
+    });
+</script>
+{% endblock content %}
+
+{% block extra_scripts %}
+
+{% endblock extra_scripts %}
+
+
+
+
+
+
+
+
