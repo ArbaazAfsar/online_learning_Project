@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Course, Lecture
+from .models import Course, Lecture,CourseCategory
 from django.contrib.auth import login
 from .forms import CustomUserCreationForm
 
 def home(request):
     return render(request, 'courses/home.html',)
 
-def course_list(request):
-    courses = Course.objects.all()
-    return render(request, 'courses/course_list.html', {'courses': courses})
+def course_category(request):
+    Category = CourseCategory.objects.all()
+    return render(request, 'courses/CourseCategory.html',{'Category':Category} )
 
 def course_detail(request, pk):
     course = get_object_or_404(Course, pk=pk)

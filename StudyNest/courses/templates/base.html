@@ -50,9 +50,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto p-4 p-lg-0">
-                    <a href="index.html" class="nav-item nav-link active">Home</a>
+                    <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
                     <a href="about.html" class="nav-item nav-link">About</a>
-                    <a href="courses.html" class="nav-item nav-link">Courses</a>
+                    <a href="{% url 'course_category' %}" class="nav-item nav-link">Courses</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu fade-down m-0">
@@ -68,10 +68,12 @@
         </nav>
         <!-- Navbar End -->
 <!-- Carousel Start -->
+{% block heading %}
 <div id="carouselExampleCaptions" class="carousel slide">
+    
     <div class="carousel-inner">
       <div class="carousel-item active">
-        {% block heading %}
+        
         <img src="{% static 'img/carousel-1.jpg' %}" class="d-block w-100" alt="...">
         
         <div class="carousel-caption d-none d-md-block  ">
@@ -93,10 +95,10 @@
           <a href="#" class="btn btn-primary py-md-3 px-md-5 me-3">Read More</a>
           <a href="#" class="btn btn-light py-md-3 px-md-5">Join Now</a>
         </div>
-        {% endblock heading %}
+        
       </div>
     </div>
- 
+   
   </div> 
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -106,6 +108,7 @@
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>
+  {% endblock heading %}
 
 
 

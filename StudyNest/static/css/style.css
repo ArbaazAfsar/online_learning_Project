@@ -318,6 +318,11 @@
 .category img,
 .course-item img {
     transition: .5s;
+    
+}
+
+.cat-img{
+    width: 100px;
 }
 
 .category a:hover img,
