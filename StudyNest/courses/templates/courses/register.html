@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block title %}Register{% endblock title %}
+
 {% block heading %}
 <div class="container-fluid bg-primary py-5 mb-5 page-header">
     <div class="container py-5">
         <div class="row justify-content-center">
             <div class="col-lg-10 text-center">
-                <h1 class="display-3 text-white animated slideInDown">Sign up</h1>
+                <h1 class="display-3 text-white animated slideInDown">Register</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
                         <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
@@ -23,46 +25,100 @@
 {% block content %}
 <div class="body">
     <div class="register-box">
-        <h2>Sign up</h2>
+        <h2>Register</h2>
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="user-box">
                 {{ form.username.label_tag }}
                 {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-message">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="user-box">
                 {{ form.email.label_tag }}
                 {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error-message">
+                        {% for error in form.email.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="user-box">
                 {{ form.age.label_tag }}
                 {{ form.age }}
+                {% if form.age.errors %}
+                    <div class="error-message">
+                        {% for error in form.age.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="user-box">
                 {{ form.bio.label_tag }}
                 {{ form.bio }}
+                {% if form.bio.errors %}
+                    <div class="error-message">
+                        {% for error in form.bio.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="user-box">
                 {{ form.profile_picture.label_tag }}
                 {{ form.profile_picture }}
+                {% if form.profile_picture.errors %}
+                    <div class="error-message">
+                        {% for error in form.profile_picture.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="user-box">
                 {{ form.role.label_tag }}
                 {{ form.role }}
+                {% if form.role.errors %}
+                    <div class="error-message">
+                        {% for error in form.role.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="user-box">
                 {{ form.password1.label_tag }}
                 {{ form.password1 }}
+                {% if form.password1.errors %}
+                    <div class="error-message">
+                        {% for error in form.password1.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="show-pw">
                 <input type="checkbox" id="show-password1"  ><i>  Show Password</i>
-
             </div>
             <br>
             <div class="user-box">
                 {{ form.password2.label_tag }}
                 {{ form.password2 }}
-                
+                {% if form.password2.errors %}
+                    <div class="error-message">
+                        {% for error in form.password2.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <br>
 
@@ -96,9 +152,7 @@
 </script>
 {% endblock content %}
 
-{% block extra_scripts %}
 
-{% endblock extra_scripts %}
 
 
 
