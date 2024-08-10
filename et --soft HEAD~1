@@ -1,0 +1,29 @@
+[33mcommit 56ae997944a4d3ed5ba267dd0c94a99680c4724b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: ArbaazAfsar <168769189+ArbaazAfsar@users.noreply.github.com>
+Date:   Thu Aug 8 16:24:01 2024 +0530
+
+    Complete logging and logout
+
+[33mcommit 19c09fee44b848fcafff3c09fd0b6a49563c6e6e[m
+Author: ArbaazAfsar <168769189+ArbaazAfsar@users.noreply.github.com>
+Date:   Wed Aug 7 00:43:11 2024 +0530
+
+    Create some Categories of courses
+
+[33mcommit 986561796a05391a7cbaa6c9697160987a2a91bd[m
+Author: ArbaazAfsar <168769189+ArbaazAfsar@users.noreply.github.com>
+Date:   Tue Aug 6 22:00:38 2024 +0530
+
+    Complete register section
+
+[33mcommit 82203e7e341c3ca7097e4eeb554895a39936ef16[m
+Author: ArbaazAfsar <168769189+ArbaazAfsar@users.noreply.github.com>
+Date:   Tue Jul 30 22:34:13 2024 +0530
+
+    Created all apps (users, courses, quizzes, dashboard)
+
+[33mcommit ec42e5fa07ac3c9b8c5bfe4d4839b0c4888247c8[m
+Author: ArbaazAfsar <168769189+ArbaazAfsar@users.noreply.github.com>
+Date:   Tue Jul 30 22:07:59 2024 +0530
+
+    Create project SteadyNest

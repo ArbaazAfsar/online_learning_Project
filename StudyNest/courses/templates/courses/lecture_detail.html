@@ -4,17 +4,19 @@
 <div class="container mt-5">
   <h1 class="mb-4">Lectures for {{ course.title }}</h1>
   {% for lecture in lecture %}
-    <div class="card mb-4 shadow-sm">
-      <div class="card-body">
-        <h2 class="card-title">{{ lecture.title }}</h2>
-        <p class="card-text">{{ lecture.description }}</p>
-        {% if lecture.video_url %}
-          <div class="embed-responsive embed-responsive-16by9 mb-3">
-            <iframe class="embed-responsive-item" src="{{ lecture.video_url }}" allowfullscreen></iframe>
-          </div>
-        {% endif %}
-      </div>
+  <div class="card mb-4 shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title">{{ lecture.title }}</h2>
+      <p class="card-text">{{ lecture.description }}</p>
+      {% if lecture.video_url %}
+        <div class="ratio ratio-16x9 mb-3">
+          <iframe src="{{ lecture.video_url }}" title="Lecture video: {{ lecture.title }}" allowfullscreen></iframe>
+        </div>
+      {% else %}
+        <p class="text-muted">No video available for this lecture.</p>
+      {% endif %}
     </div>
-  {% endfor %}
+  </div>
+{% endfor %}
 </div>
 {% endblock content %}
