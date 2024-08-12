@@ -38,10 +38,10 @@
             <h1 class="mb-5">Courses Categories</h1>
         </div>
         <div class="row g-3">
-            {% for cats in Category %}
+            {% for cats in categories %}
 
             <div class="col-lg-4 col-md-4 col-xs-6 wow zoomIn" data-wow-delay="0.7s" style="min-height: 350px;">
-                <a class="position-relative d-block h-100 overflow-hidden" href="{% url 'course_detail' foo=cats.name %}">
+                <a class="position-relative d-block h-100 overflow-hidden" href="{% url 'course_detail' foo=cats.name  %}">
                     <img class="img-fluid position-absolute w-100 h-100 "  src="{{ cats.image.url }}" alt="{{cats.name}}" style="object-fit: fill;">
                     <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin:  1px;">
                         <h5 class="m-0">{{cats.name}}</h5>

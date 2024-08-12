@@ -11,7 +11,7 @@
                 <h1 class="display-3 text-white animated slideInDown">Login</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
                         <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
                         <li class="breadcrumb-item text-white active" aria-current="page">Login</li>
                     </ol>
@@ -28,12 +28,11 @@
         <h2>Login</h2>
         <form method="POST">
             {% csrf_token %}
+            
             <!-- Display general form errors -->
-            {% if form.non_field_errors %}
+            {% if error %}
                 <div class="error-message">
-                    {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
+                    <p>{{ error }}</p>
                 </div>
             {% endif %}
             
@@ -62,7 +61,7 @@
             </div>
             
             <div class="show-pw">
-                <input type="checkbox" id="show-password"><i>Show Password</i>
+                <input type="checkbox" id="show-password" aria-label="Show password"><i>Show Password</i>
             </div>
             
             <br>
@@ -88,6 +87,5 @@
     });
 </script>
 {% endblock content %}
-
 
 

@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-5">
   <h1 class="mb-4">Lectures for {{ course.title }}</h1>
-  {% for lecture in lecture %}
+  {% for lecture in lectures %}
   <div class="card mb-4 shadow-sm">
     <div class="card-body">
       <h2 class="card-title">{{ lecture.title }}</h2>

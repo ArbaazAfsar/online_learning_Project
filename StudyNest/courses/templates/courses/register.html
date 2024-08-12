@@ -11,9 +11,9 @@
                 <h1 class="display-3 text-white animated slideInDown">Register</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
                         <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                        <li class="breadcrumb-item text-white active" aria-current="page">Courses</li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Register</li>
                     </ol>
                 </nav>
             </div>
@@ -26,8 +26,9 @@
 <div class="body">
     <div class="register-box">
         <h2>Register</h2>
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST">
             {% csrf_token %}
+            
             <div class="user-box">
                 {{ form.username.label_tag }}
                 {{ form.username }}
@@ -39,6 +40,7 @@
                     </div>
                 {% endif %}
             </div>
+            
             <div class="user-box">
                 {{ form.email.label_tag }}
                 {{ form.email }}
@@ -50,50 +52,7 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="user-box">
-                {{ form.age.label_tag }}
-                {{ form.age }}
-                {% if form.age.errors %}
-                    <div class="error-message">
-                        {% for error in form.age.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div class="user-box">
-                {{ form.bio.label_tag }}
-                {{ form.bio }}
-                {% if form.bio.errors %}
-                    <div class="error-message">
-                        {% for error in form.bio.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div class="user-box">
-                {{ form.profile_picture.label_tag }}
-                {{ form.profile_picture }}
-                {% if form.profile_picture.errors %}
-                    <div class="error-message">
-                        {% for error in form.profile_picture.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            <div class="user-box">
-                {{ form.role.label_tag }}
-                {{ form.role }}
-                {% if form.role.errors %}
-                    <div class="error-message">
-                        {% for error in form.role.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
+            
             <div class="user-box">
                 {{ form.password1.label_tag }}
                 {{ form.password1 }}
@@ -106,9 +65,9 @@
                 {% endif %}
             </div>
             <div class="show-pw">
-                <input type="checkbox" id="show-password1"  ><i>  Show Password</i>
+                <input type="checkbox" id="show-password1" aria-label="Show password 1"><i> Show Password</i>
             </div>
-            <br>
+            
             <div class="user-box">
                 {{ form.password2.label_tag }}
                 {{ form.password2 }}
@@ -120,8 +79,11 @@
                     </div>
                 {% endif %}
             </div>
+            <div class="show-pw">
+                <input type="checkbox" id="show-password2" aria-label="Show password 2"><i> Show Password</i>
+            </div>
+            
             <br>
-
             <button type="submit">
                 <span></span>
                 <span></span>
@@ -151,13 +113,3 @@
     });
 </script>
 {% endblock content %}
-
-
-
-
-
-
-
-
-
-

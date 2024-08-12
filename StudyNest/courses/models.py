@@ -37,47 +37,24 @@ class Lecture(models.Model):
         ordering = ['order']
 
     def __str__(self):
-        return self.title
+        return f"{self.course}-{self.order}"
     
     
+    
+class Enrollment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='enrollments')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
+    enrolled_at = models.DateTimeField(auto_now_add=True)
 
-class CustomUser(AbstractUser):
-    email = models.EmailField(max_length=255, unique=True)  
-    
- # If you want to enable email validation, uncomment the following line and comment out the email field above.
-    # Then, run the migrations and update any existing CustomUser data if necessary.
-    # email = models.EmailField(unique=True, validators=[EmailValidator()])
+    class Meta:
+        unique_together = ('user', 'course')
 
-    # Role field
-    STUDENT = 'student'
-    INSTRUCTOR = 'instructor'
-    ROLE_CHOICES = [
-        (STUDENT, 'Student'),
-        (INSTRUCTOR, 'Instructor'),
-    ]
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default=STUDENT)
-
-    groups = models.ManyToManyField(
-        Group,
-        related_name='customuser_set',  # Avoid conflict with auth.User.groups
-        blank=True,
-        help_text='The groups this user belongs to.',
-        verbose_name='groups',
-    )
-    user_permissions = models.ManyToManyField(
-        Permission,
-        related_name='customuser_set',  # Avoid conflict with auth.User.user_permissions
-        blank=True,
-        help_text='Specific permissions for this user.',
-        verbose_name='user permissions',
-    )
-    
     def __str__(self):
-        return self.email  # Changed to return email as identifier
+        return f"{self.user} enrolled in {self.course}"
+    
+    
 
-    # Ensure `email` field is used as a unique identifier
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+
 
 
 
