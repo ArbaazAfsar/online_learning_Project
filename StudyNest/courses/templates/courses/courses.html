@@ -31,14 +31,15 @@
             <div class="card" style="width: 18rem;">
                 <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
                 <div class="card-body">
-                    <h5 class="card-title">{{ course.title }}</h5>
-                    <p class="card-text">{{ course.description }}</p>
-                    <a href="{% url 'lecture_detail' pk=course.pk %}" class="btn btn-primary">Open</a>
+                    <h5 class="card-title ">{{ course.title }}</h5>
+                    <a href="{% url 'lecture_detail' pk=course.pk %}" class=" btn btn-primary">Open</a>
+
+
 
                     <!-- Enrollment button -->
                     {% if user.is_authenticated %}
                         {% if enrolled_courses|get_item:course.id %}
-                            <button class="btn btn-success" disabled>Already Enrolled</button>
+                            <button class="btn btn-success" disabled> Enrolled</button>
                         {% else %}
                             <a href="{% url 'enroll_course' course_id=course.id %}" class="btn btn-primary">Enroll</a>
                         {% endif %}
@@ -50,6 +51,14 @@
                     <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>{{ course.instructor }}</small>
                     <small class="flex-fill text-center border-end py-2">{{ course.video_count }} videos</small>
                 </div>
+                <div class="d-flex border-top">
+                    <!-- Loop through quizzes related to the course -->
+                {% for quiz in course.quizzes.all %}
+                <a href="{% url 'quiz_detail' course_id=course.pk quiz_id=quiz.pk %}" class="flex-fill btn btn-secondary">Quiz</a>
+                <a href="{% url 'quiz_result' course_id=course.pk quiz_id=quiz.pk %}" class="flex-fill btn btn-secondary">Quiz Result</a>
+                {% endfor %}
+                </div>
+                
             </div>
         </div>
         {% endfor %}

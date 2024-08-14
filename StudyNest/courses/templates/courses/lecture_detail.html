@@ -2,7 +2,13 @@
 
 {% block content %}
 <div class="container mt-5">
-  <h1 class="mb-4">Lectures for {{ course.title }}</h1>
+  <div class="card-body mb-4 shadow-sm">
+    <h1 class="card-title mb-4">{{ course.title }}</h1>
+    <h5 class="card-text mb-4"> {{ course.description }}</h5>
+  </div>
+
+
+
   {% for lecture in lectures %}
   <div class="card mb-4 shadow-sm">
     <div class="card-body">
