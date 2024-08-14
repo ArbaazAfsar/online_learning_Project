@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Enrollment
+from .models import Enrollment,Course
 from django.contrib.auth.models import User
 
 
@@ -17,3 +17,9 @@ class EnrollmentForm(forms.ModelForm):
     class Meta:
         model = Enrollment
         fields = []
+        
+        
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['title', 'image', 'description', 'category']

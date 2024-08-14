@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Quiz, StudentQuizAttempt
-from .forms import QuizAttemptForm
+from .forms import QuizAttemptForm,QuizForm
 from courses.models import Course
 
 @login_required
@@ -52,3 +52,38 @@ def retry_quiz(request, course_id, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
     # Logic to handle retrying the quiz
     return redirect('quiz_detail', course_id=course_id, quiz_id=quiz_id)
+
+
+
+@login_required
+def upload_quiz(request):
+    if request.method == 'POST':
+        form = QuizForm(request.POST)
+        if form.is_valid():
+            quiz = form.save()
+            return redirect('quiz_detail', pk=quiz.pk)
+    else:
+        form = QuizForm()
+    return render(request, 'upload_quiz.html', {'form': form})
+
+@login_required
+def edit_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
+    
+    if request.method == 'POST':
+        form = QuizForm(request.POST, instance=quiz)
+        if form.is_valid():
+            form.save()
+            return redirect('my_courses')
+    else:
+        form = QuizForm(instance=quiz)
+    
+    return render(request, 'quizzes/edit_quiz.html', {'form': form, 'quiz': quiz})
+
+@login_required
+def delete_quiz(request, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
+    if request.method == 'POST':
+        quiz.delete()
+        return redirect('my_courses')
+    return render(request, 'quizzes/delete_quiz_confirm.html', {'quiz': quiz})

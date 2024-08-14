@@ -1,5 +1,5 @@
 from django import forms
-from .models import Question, Choice
+from .models import Question, Choice,Quiz
 
 class QuizAttemptForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -13,3 +13,10 @@ class QuizAttemptForm(forms.Form):
                 widget=forms.RadioSelect,
                 label=question.question_text
             )
+            
+            
+            
+class QuizForm(forms.ModelForm):
+    class Meta:
+        model = Quiz
+        fields = ['course', 'title', 'description', 'total_marks', 'passing_marks']

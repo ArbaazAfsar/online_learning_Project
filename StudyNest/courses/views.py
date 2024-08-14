@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Course, Lecture, CourseCategory, Enrollment
 from django.contrib.auth import login, logout, authenticate
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CourseForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -97,3 +97,45 @@ def user_logout(request):
     return redirect('home')
 
 
+
+@login_required
+def upload_course(request):
+    if request.method == 'POST':
+        form = CourseForm(request.POST, request.FILES)
+        if form.is_valid():
+            course = form.save(commit=False)
+            course.instructor = request.user
+            course.save()
+            return redirect('my_courses',)
+    else:
+        form = CourseForm()
+    return render(request, 'courses/upload_course.html', {'form': form})
+
+
+@login_required
+def my_courses(request):
+    courses = Course.objects.filter(instructor=request.user)
+    return render(request, 'courses/my_courses.html', {'courses': courses})
+
+
+@login_required
+def edit_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    
+    if request.method == 'POST':
+        form = CourseForm(request.POST, request.FILES, instance=course)
+        if form.is_valid():
+            form.save()
+            return redirect('my_courses')
+    else:
+        form = CourseForm(instance=course)
+    
+    return render(request, 'courses/edit_course.html', {'form': form, 'course': course})
+
+@login_required
+def delete_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id, instructor=request.user)
+    if request.method == 'POST':
+        course.delete()
+        return redirect('my_courses')
+    return render(request, 'courses/delete_course_confirm.html', {'course': course})

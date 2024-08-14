@@ -7,14 +7,14 @@ from django.core.validators import EmailValidator
 class CourseCategory(models.Model):
     name = models.CharField(max_length=255, unique=True)
     course_count = models.PositiveIntegerField(default=0)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='Categories', null=True, blank=True)
 
     def __str__(self):
         return self.name
 
 class Course(models.Model):
     title = models.CharField(max_length=200)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='courses', null=True, blank=True)
     description = models.TextField()
     instructor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='courses')
     category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE, related_name='courses', null=True, blank=True)
