@@ -24,26 +24,44 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        {% if courses %}
-            {% for course in courses %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card" style="width: 18rem;">
-                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ course.title }}</h5>
-                        <p class="card-text">{{ course.description }}</p>
-                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="btn btn-primary">Open</a>
+        {% for course in courses %}
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="course-item bg-light">
+                <div class="position-relative overflow-hidden">
+                    <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }}">
+                </div>
+                <div class="text-center p-4 pb-0">
+                    <h5 class="mb-4">{{ course.title }}</h5>
+                    <div class="mb-3">
+                        <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;" onclick="toggleDescription(event, 'desc-{{ course.id }}')">Read More</a>
+                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Open</a>
                     </div>
-                    <div class="d-flex border-top">
-                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>{{ course.instructor }}</small>
-                        <small class="flex-fill text-center border-end py-2">{{ course.video_count }} videos</small>
+                    <div id="desc-{{ course.id }}" class="course-description" style="display: none;">
+                        <p>{{ course.description }}</p>
                     </div>
                 </div>
+                <div class="d-flex border-top">
+                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>{{ course.instructor }}</small>
+                    <small class="flex-fill text-center border-end py-2">{{ course.video_count }} videos</small>
+                </div>
             </div>
-            {% endfor %}
-        {% else %}
-            <p>You are not enrolled in any courses yet.</p>
-        {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-center">You are not enrolled in any courses yet.</p>
+        {% endfor %}
     </div>
 </div>
+
+<script>
+    function toggleDescription(event, descriptionId) {
+        event.preventDefault(); // Prevent default anchor behavior
+        var description = document.getElementById(descriptionId);
+        if (description.style.display === "none") {
+            description.style.display = "block";
+        } else {
+            description.style.display = "none";
+        }
+    }
+</script>
 {% endblock content %}
+

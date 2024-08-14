@@ -6,19 +6,27 @@
 <div class="container mt-5">
     <h2 class="mb-4">My Uploaded Courses</h2>
     {% if courses %}
-        <ul class="list-group">
+        <div class="row">
             {% for course in courses %}
-                <li class="list-group-item">
-                    <h5>{{ course.title }}</h5>
-                    <p>{{ course.description }}</p>
-                    <a href="{% url 'course_detail' foo=course.title %}" class="btn btn-primary">View Course</a>
-                    <div>
-                        <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="{% url 'delete_course' course.id %}" class="btn btn-sm btn-danger">Delete</a>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" class="card-img-top" alt="{{ course.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course.title }}</h5>
+                        
+                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="btn btn-primary">View Course</a>
+                        <a href="{% url 'upload_quiz' %}" class="btn btn-primary">Add quiz</a>
+                        <div class="mt-2">
+                            <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-warning me-2">Edit</a>
+                            <a href="{% url 'delete_course' course.id %}" class="btn btn-sm btn-danger">Delete</a>
+                        </div>
                     </div>
-                </li>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         <p>You haven't uploaded any courses yet.</p>
     {% endif %}

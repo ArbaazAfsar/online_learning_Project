@@ -59,7 +59,7 @@ def lecture_detail(request, pk):
     
     if not lectures.exists():
         messages.info(request, 'No lectures available for this course.')
-        return redirect('course_detail', foo=course.category.name)
+        # return redirect('course_detail', foo=course.category.name)
     
     return render(request, 'courses/lecture_detail.html', {'lectures': lectures, 'course': course})
 
