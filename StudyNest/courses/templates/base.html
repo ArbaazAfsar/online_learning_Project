@@ -55,32 +55,28 @@
                     <a href="{% url 'course_category' %}" class="nav-item nav-link">Courses</a>
                     
 
-                    <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
-                        <div class="dropdown-menu fade-down m-0">
-                            <a href="team.html" class="dropdown-item">Our Team</a>
-                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                            <a href="404.html" class="dropdown-item">404 Page</a>
-                        </div>
-                    </div>
+                    
                     <a href="contact.html" class="nav-item nav-link">Contact</a>
                 
-                
-                
-
                     {% if user.is_authenticated %}
-                    
-                    <a class="nav-link nav-link" href="{% url 'my_courses' %}">My Courses</a>
-                    <a href="{% url 'upload_course' %}" class="nav-item nav-link">upload Course</a>
-                    <a href="{% url 'enrolled_courses'  %}" class="nav-item nav-link">Enrolled courses</a>
-                </div>
-                    <a href="{% url 'logout' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Logout</a>
-                    
-
+                    {% if user.is_superuser %}
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Admin Dashboard</a>
+                        <div class="dropdown-menu fade-down m-0">
+                            <a href="{% url 'manage_courses' %}" class="dropdown-item">Manage Courses</a>
+                            <a href="{% url 'manage_users' %}" class="dropdown-item">Manage Users</a>
+                            <a href="{% url 'upload_category' %}" class="dropdown-item">Upload Category</a>
+                        </div>
+                    </div>
                     {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Login</a>
+                        <a href="{% url 'enrolled_courses' %}" class="nav-item nav-link">Enrolled Courses</a>
                     {% endif %}
-                    <a href="{% url 'register' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Register</a>
+                    <a href="{% url 'logout' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Login</a>
+                {% endif %}
+                <a href="{% url 'register' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Register</a>
+                
                 
 
             </div>

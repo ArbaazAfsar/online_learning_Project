@@ -1,83 +1,95 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load custom_filters %}  <!-- Ensure custom_filters is loaded -->
+{% load custom_filters %} <!-- Ensure custom_filters is loaded -->
 
-{% block title %}Course Detail{% endblock title %}
+{% block title %}
+  Course Detail
+{% endblock %}
 
 {% block heading %}
-<div class="container-fluid bg-primary py-5 mb-5 page-header">
+  <div class="container-fluid bg-primary py-5 mb-5 page-header">
     <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center">
-                <h1 class="display-3 text-white animated slideInDown">{{ category_obj.name }}</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
-                        <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                        <li class="breadcrumb-item text-white active" aria-current="page">Courses</li>
-                    </ol>
-                </nav>
-            </div>
+      <div class="row justify-content-center">
+        <div class="col-lg-10 text-center">
+          <h1 class="display-3 text-white animated slideInDown">{{ category_obj.name }}</h1>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+              <li class="breadcrumb-item">
+                <a class="text-white" href="{% url 'home' %}">Home</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a class="text-white" href="#">Pages</a>
+              </li>
+              <li class="breadcrumb-item text-white active" aria-current="page">Courses</li>
+            </ol>
+          </nav>
         </div>
+      </div>
     </div>
-</div>
-{% endblock heading %}
+  </div>
+{% endblock %}
 
 {% block content %}
-<div class="container">
+  <div class="container">
     <div class="row">
-        {% for course in courses %}
+      {% for course in courses %}
         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="course-item bg-light">
-                <div class="position-relative overflow-hidden">
-                    <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }}">
-                    
+          <div class="course-item bg-light">
+            <div class="position-relative overflow-hidden">
+              <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }}" />
+            </div>
+            <div class="text-center p-4 pb-0">
+              <h5 class="mb-4">{{ course.title }}</h5>
+              <!-- Adjust the content below as needed -->
+              <div class="mb-3">
+                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;" onclick="toggleDescription(event, 'desc-{{ course.id }}')">Read More</a>
+                <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-secondary px-3" style="border-radius: 0;">Open</a>
+                
+                {% if user.is_authenticated %}
+                    {% if enrolled_courses|get_item:course.id %}
+                        <button class="btn btn-sm btn-success" disabled style="border-radius: 0 30px 30px 0;">Enrolled</button>
+                    {% else %}
+                        <a href="{% url 'enroll_course' course_id=course.id %}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
+                    {% endif %}
+            
+                  <!-- Quiz Buttons (if quizzes are available) -->
+                  {% if course.quizzes.exists %}
+                  <div class="d-flex mt-3">
+                      <a href="{% url 'quiz_detail' course_id=course.id quiz_id=course.quizzes.first.id %}" class="btn btn-sm btn-warning flex-fill">Attend Quiz</a>
+                      <a href="{% url 'quiz_result' course_id=course.id quiz_id=course.quizzes.first.id %}" class="btn btn-sm btn-info flex-fill">Quiz Result</a>
+                  </div>
+              {% endif %}
+                {% else %}
+                    <p class="text-center"><a href="{% url 'login' %}">Log in</a> to enroll.</p>
+                {% endif %}
                 </div>
-                <div class="text-center p-4 pb-0">
-                    <h5 class="mb-4">{{ course.title }}</h5>
-                    <!-- Adjust the content below as needed -->
-                    <div class="mb-3">
-                        <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;" onclick="toggleDescription(event, 'desc-{{ course.id }}')">Read More</a>
-                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-secondary px-3" style="border-radius: 0;">Open</a>
-                        {% if user.is_authenticated %}
-                            {% if enrolled_courses|get_item:course.id %}
-                                <button class="btn btn-sm btn-success" disabled style="border-radius: 0 30px 30px 0;">Enrolled</button>
-                            {% else %}
-                                <a href="{% url 'enroll_course' course_id=course.id %}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                            {% endif %}
-                        {% else %}
-                            <p class="text-center"><a href="{% url 'login' %}">Log in</a> to enroll.</p>
-                        {% endif %}
-                    </div>
                     <!-- Course Description (Initially hidden) -->
                     <div id="desc-{{ course.id }}" class="course-description" style="display: none;">
                         <p>{{ course.description }}</p>
-                    </div>
-                    
-                </div>
-                <div class="d-flex border-top">
-                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>{{ course.instructor }}</small>
-                    <small class="flex-fill text-center border-end py-2">{{ course.video_count }} videos</small>
-                </div>
+              </div>
             </div>
+            <div class="d-flex border-top">
+              <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>{{ course.instructor }}</small>
+              <small class="flex-fill text-center border-end py-2">{{ course.video_count }} videos</small>
+            </div>
+          </div>
         </div>
-        {% empty %}
+      {% empty %}
         <p class="text-center">It looks like there are no courses available in this category right now. Explore other categories or check back later to find something that interests you!</p>
-        {% endfor %}
+      {% endfor %}
     </div>
-</div>
+  </div>
 
-
-<!-- Add this JavaScript at the bottom of your template or in a separate JS file -->
-<script>
+  <!-- Add this JavaScript at the bottom of your template or in a separate JS file -->
+  <script>
     function toggleDescription(event, descriptionId) {
-        event.preventDefault(); // Prevent default anchor behavior
-        var description = document.getElementById(descriptionId);
-        if (description.style.display === "none") {
-            description.style.display = "block";
-        } else {
-            description.style.display = "none";
-        }
+      event.preventDefault() // Prevent default anchor behavior
+      var description = document.getElementById(descriptionId)
+      if (description.style.display === 'none') {
+        description.style.display = 'block'
+      } else {
+        description.style.display = 'none'
+      }
     }
-    </script>
-{% endblock content %}
+  </script>
+{% endblock %}

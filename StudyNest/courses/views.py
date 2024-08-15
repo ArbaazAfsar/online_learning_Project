@@ -1,18 +1,18 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Course, Lecture, CourseCategory, Enrollment
 from django.contrib.auth import login, logout, authenticate
-from .forms import CustomUserCreationForm, CourseForm
+from .forms import CustomUserCreationForm, CourseForm, CategoryForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import user_passes_test
 
 def home(request):
     return render(request, 'courses/home.html')
 
 @never_cache
-@login_required(login_url='/login/')
 def course_category(request):
     categories = CourseCategory.objects.all()
     return render(request, 'courses/CourseCategory.html', {'categories': categories})
@@ -27,7 +27,7 @@ def course_detail(request, foo):
     
     return render(request, 'courses/courses.html', {'courses': courses, 'category_obj': category_obj, 'enrolled_courses': enrolled_courses})
 
-@login_required
+@login_required(login_url='/login/')
 def enroll_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     user = request.user
@@ -106,16 +106,12 @@ def upload_course(request):
             course = form.save(commit=False)
             course.instructor = request.user
             course.save()
-            return redirect('my_courses',)
+            return redirect('manage_courses',)
     else:
         form = CourseForm()
     return render(request, 'courses/upload_course.html', {'form': form})
 
 
-@login_required
-def my_courses(request):
-    courses = Course.objects.filter(instructor=request.user)
-    return render(request, 'courses/my_courses.html', {'courses': courses})
 
 
 @login_required
@@ -126,7 +122,7 @@ def edit_course(request, course_id):
         form = CourseForm(request.POST, request.FILES, instance=course)
         if form.is_valid():
             form.save()
-            return redirect('my_courses')
+            return redirect('manage_courses')
     else:
         form = CourseForm(instance=course)
     
@@ -137,5 +133,6 @@ def delete_course(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
     if request.method == 'POST':
         course.delete()
-        return redirect('my_courses')
+        return redirect('manage_courses')
     return render(request, 'courses/delete_course_confirm.html', {'course': course})
+

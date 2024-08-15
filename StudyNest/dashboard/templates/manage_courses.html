@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Courses{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Manage Courses</h2>
+    <a href="{% url 'upload_course' %}" class="btn btn-primary mb-4">Upload New Course</a>
+    
+    {% if courses %}
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="course-item bg-light">
+                <div class="position-relative overflow-hidden">
+                    {% if course.image %}
+                    <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }}">
+                    {% endif %}
+                </div>
+                <div class="text-center p-4 pb-0">
+                    <h5 class="mb-4">{{ course.title }}</h5>
+                    
+                    <div class="mb-3">
+                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Open</a>
+                        <a href="{% url 'upload_quiz' %}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Add Quiz</a>
+                    </div>
+                    
+                    <!-- Course Description (Initially hidden) -->
+                    <div id="desc-{{ course.id }}" class="course-description" style="display: none;">
+                        <p>{{ course.description }}</p>
+                    </div>
+
+                    <div class="mt-2">
+                        <a href="{% url 'edit_course' course.id %}" class="btn btn-sm btn-warning me-2">Edit</a>
+                        <a href="{% url 'delete_course' course.id %}" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </div>
+                <div class="d-flex border-top">
+                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>{{ course.instructor }}</small>
+                    <small class="flex-fill text-center border-end py-2">{{ course.video_count }} videos</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No courses available.</p>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>No courses available.</p>
+    {% endif %}
+</div>
+{% endblock %}

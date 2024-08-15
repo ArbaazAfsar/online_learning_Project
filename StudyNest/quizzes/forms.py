@@ -20,3 +20,9 @@ class QuizForm(forms.ModelForm):
     class Meta:
         model = Quiz
         fields = ['course', 'title', 'description', 'total_marks', 'passing_marks']
+        
+
+class QustionForm(forms.ModelForm):
+    class Meta:
+        model = Question
+        fields = '__all__'
