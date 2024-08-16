@@ -11,8 +11,10 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('enroll/<int:course_id>/', views.enroll_course, name='enroll_course'),
     path('enrolled_courses/', views.enrolled_courses, name='enrolled_courses'), 
-    path('upload/course/', views.upload_course, name='upload_course'),
-    path('course/<int:course_id>/edit/', views.edit_course, name='edit_course'),
-    path('course/<int:course_id>/delete/', views.delete_course, name='delete_course'),
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+    
+    
+   
     
 ]

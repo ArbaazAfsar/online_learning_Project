@@ -2,6 +2,24 @@
 
 {% block title %}Manage Courses{% endblock %}
 
+{% block heading %}
+<div class="container-fluid bg-primary py-5 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">Manage Courses</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock heading %}
+
+
 {% block content %}
 <div class="container mt-5">
     <h2 class="mb-4">Manage Courses</h2>
@@ -10,19 +28,19 @@
     {% if courses %}
     <div class="row">
         {% for course in courses %}
-        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s" style="margin-top: 30px; box-shadow: 5px 5px 10px 5px;">
             <div class="course-item bg-light">
                 <div class="position-relative overflow-hidden">
                     {% if course.image %}
-                    <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }}">
+                    <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }} " style="height: 280px; width: 100%; ">
                     {% endif %}
                 </div>
                 <div class="text-center p-4 pb-0">
                     <h5 class="mb-4">{{ course.title }}</h5>
                     
                     <div class="mb-3">
-                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Open</a>
-                        <a href="{% url 'upload_quiz' %}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Add Quiz</a>
+                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px ; width: 200px;">Open</a>
+                        
                     </div>
                     
                     <!-- Course Description (Initially hidden) -->

@@ -100,41 +100,17 @@ def user_logout(request):
 
 
 
-@login_required
-def upload_course(request):
-    if request.method == 'POST':
-        form = CourseForm(request.POST, request.FILES)
-        if form.is_valid():
-            course = form.save(commit=False)
-            course.instructor = request.user
-            course.save()
-            return redirect('manage_courses',)
-    else:
-        form = CourseForm()
-    return render(request, 'courses/upload_course.html', {'form': form})
+def about(request):
+    return render(request, 'courses/about.html')
+
+def contact(request):
+    return render(request, 'courses/contact.html')
 
 
 
 
-@login_required
-def edit_course(request, course_id):
-    course = get_object_or_404(Course, id=course_id, instructor=request.user)
-    
-    if request.method == 'POST':
-        form = CourseForm(request.POST, request.FILES, instance=course)
-        if form.is_valid():
-            form.save()
-            return redirect('manage_courses')
-    else:
-        form = CourseForm(instance=course)
-    
-    return render(request, 'courses/edit_course.html', {'form': form, 'course': course})
 
-@login_required
-def delete_course(request, course_id):
-    course = get_object_or_404(Course, id=course_id, instructor=request.user)
-    if request.method == 'POST':
-        course.delete()
-        return redirect('manage_courses')
-    return render(request, 'courses/delete_course_confirm.html', {'course': course})
+
+
+
 

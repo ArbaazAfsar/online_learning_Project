@@ -1,9 +1,6 @@
 from django.contrib import admin
 from .models import Quiz, Question, Choice, StudentQuizAttempt
 
-from django.contrib import admin
-from .models import Quiz, Question, Choice, StudentQuizAttempt
-
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 1
@@ -29,3 +26,9 @@ class StudentQuizAttemptAdmin(admin.ModelAdmin):
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(StudentQuizAttempt, StudentQuizAttemptAdmin)
+# Customizing the admin site appearance
+admin.site.site_header = "My Online Learning Platform Admin"
+admin.site.site_title = "StudyNest Admin Portal"
+admin.site.index_title = "Welcome to the StudyNest Admin"
+
+

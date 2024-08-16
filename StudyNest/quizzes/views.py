@@ -13,20 +13,11 @@ import random
 def quiz_detail(request, course_id, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id, course__id=course_id)
     
-    # Get 10 random questions from the quiz
+    # Get all questions related to the quiz
     questions = list(quiz.questions.all())
-    if len(questions) > 10:
-        random_questions = random.sample(questions, 10)
-    else:
-        random_questions = questions
-
-    # Ensure each question has exactly 4 choices
-    for question in random_questions:
-        choices = list(question.choices.all())
-        if len(choices) < 4:
-            # Add dummy choices or handle the case where there are fewer than 4 choices
-            while len(choices) < 4:
-                choices.append(Choice(question=question, choice_text='', is_correct=False))
+    
+    # Randomly select 10 questions
+    random_questions = random.sample(questions, 10) if len(questions) >= 10 else questions
     
     if request.method == 'POST':
         form = QuizAttemptForm(request.POST, questions=random_questions)
