@@ -1,23 +1,42 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Quiz, StudentQuizAttempt
-from .forms import QuizAttemptForm,QuizForm
+from .forms import QuizAttemptForm,QuizForm, Question, QuestionForm, Quiz, ChoiceFormSet ,ChoiceForm, Choice
 from courses.models import Course
 from django.contrib.auth.decorators import user_passes_test
+from django.forms import inlineformset_factory
+from django.forms import modelformset_factory
+import random
+
 
 @login_required
 def quiz_detail(request, course_id, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id, course__id=course_id)
     
+    # Get 10 random questions from the quiz
+    questions = list(quiz.questions.all())
+    if len(questions) > 10:
+        random_questions = random.sample(questions, 10)
+    else:
+        random_questions = questions
+
+    # Ensure each question has exactly 4 choices
+    for question in random_questions:
+        choices = list(question.choices.all())
+        if len(choices) < 4:
+            # Add dummy choices or handle the case where there are fewer than 4 choices
+            while len(choices) < 4:
+                choices.append(Choice(question=question, choice_text='', is_correct=False))
+    
     if request.method == 'POST':
-        form = QuizAttemptForm(request.POST, questions=quiz.questions.all())
+        form = QuizAttemptForm(request.POST, questions=random_questions)
         if form.is_valid():
             score = 0
             total_marks = 0
-            for question in quiz.questions.all():
+            for question in random_questions:
                 selected_choice_id = form.cleaned_data.get(f'question_{question.id}')
-                selected_choice = question.choices.get(id=selected_choice_id)
-                if selected_choice.is_correct:
+                selected_choice = question.choices.filter(id=selected_choice_id).first()
+                if selected_choice and selected_choice.is_correct:
                     score += question.marks
                 total_marks += question.marks
             
@@ -26,7 +45,7 @@ def quiz_detail(request, course_id, quiz_id):
             
             return redirect('quiz_result', course_id=course_id, quiz_id=quiz.id)
     else:
-        form = QuizAttemptForm(questions=quiz.questions.all())
+        form = QuizAttemptForm(questions=random_questions)
     
     return render(request, 'quiz_detail.html', {'quiz': quiz, 'form': form})
 
@@ -60,17 +79,41 @@ def superuser_required(view_func):
     decorated_view_func = user_passes_test(lambda u: u.is_superuser)(view_func)
     return decorated_view_func
 
+QuestionFormSet = inlineformset_factory(Quiz, Question, form= QuestionForm, extra=1)
+
 @superuser_required
 def upload_quiz(request):
     if request.method == 'POST':
-        form = QuizForm(request.POST)
-        if form.is_valid():
-            quiz = form.save()
-            return redirect('quiz_detail', pk=quiz.pk)
+        quiz_form = QuizForm(request.POST)
+        question_formset = QuestionFormSet(request.POST, prefix='questions')
+        choice_formsets = [ChoiceFormSet(request.POST, prefix=f'choices_{i}') for i in range(20)]
+        
+        if quiz_form.is_valid() and question_formset.is_valid() and all(cf.is_valid() for cf in choice_formsets):
+            quiz = quiz_form.save()
+            questions = question_formset.save(commit=False)
+            for i, question in enumerate(questions):
+                question.quiz = quiz
+                question.save()
+                choices = choice_formsets[i].save(commit=False)
+                for choice in choices:
+                    choice.question = question
+                    choice.save()
+            
+            return redirect('success_view_name')  # Replace with your actual success view name
     else:
-        form = QuizForm()
-    return render(request, 'upload_quiz.html', {'form': form})
-
+        quiz_form = QuizForm()
+        question_formset = QuestionFormSet(prefix='questions')
+        choice_formsets = [ChoiceFormSet(prefix=f'choices_{i}') for i in range(20)]
+    
+    return render(request, 'upload_quiz.html', {
+        'quiz_form': quiz_form,
+        'question_formset': question_formset,
+        'choice_formsets': choice_formsets,
+    })
+    
+def success_view(request):
+    return render(request, 'success.html')
+    
 @superuser_required
 def edit_quiz(request, quiz_id):
     quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
@@ -83,7 +126,7 @@ def edit_quiz(request, quiz_id):
     else:
         form = QuizForm(instance=quiz)
     
-    return render(request, 'quizzes/edit_quiz.html', {'form': form, 'quiz': quiz})
+    return render(request, 'edit_quiz.html', {'form': form, 'quiz': quiz})
 
 @superuser_required
 def delete_quiz(request, quiz_id):
@@ -91,4 +134,4 @@ def delete_quiz(request, quiz_id):
     if request.method == 'POST':
         quiz.delete()
         return redirect('my_courses')
-    return render(request, 'quizzes/delete_quiz_confirm.html', {'quiz': quiz})
+    return render(request, 'delete_quiz_confirm.html', {'quiz': quiz})

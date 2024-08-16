@@ -1,12 +1,80 @@
 {% extends 'base.html' %}
-
+{% load form_filters %}
 {% block content %}
 <div class="container mt-5">
     <h2>Upload a New Quiz</h2>
-    <form method="POST">
+    <form method="POST" id="quiz-form">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <!-- Render the quiz form -->
+        {{ quiz_form.as_p }}
+        
+        <!-- Render the question formset -->
+        
+        
+        <div id="questions-container">
+            {% for question_form in question_formset %}
+                <div class="mb-4 question-form">
+                    {{ question_form.as_p }}
+                    
+                    <!-- Render the choice formset for this question -->
+                    {{ choice_formsets|get_choice_formset:forloop.counter0 }}
+                    
+                    <button type="button" class="btn btn-secondary add-choice-btn" data-question-index="{{ forloop.counter0 }}">Add Choice</button>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <button type="button" class="btn btn-primary" id="add-question-btn">Add Question</button>
         <button type="submit" class="btn btn-primary">Upload Quiz</button>
     </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let questionCounter = {{ question_formset.total_form_count }};
+    
+    document.getElementById('add-question-btn').addEventListener('click', function() {
+        questionCounter++;
+        const questionTemplate = `
+            <div class="mb-4 question-form">
+                <input type="hidden" name="questions-TOTAL_FORMS" value="${questionCounter}">
+                <div class="form-group">
+                    <label for="id_questions-${questionCounter}-question_text">Question text:</label>
+                    <textarea name="questions-${questionCounter}-question_text" id="id_questions-${questionCounter}-question_text" class="form-control"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="id_questions-${questionCounter}-marks">Marks:</label>
+                    <input type="number" name="questions-${questionCounter}-marks" id="id_questions-${questionCounter}-marks" class="form-control">
+                </div>
+                <div id="choices-container-${questionCounter}">
+                    <!-- Choices will be dynamically added here -->
+                </div>
+                <button type="button" class="btn btn-secondary add-choice-btn" data-question-index="${questionCounter}">Add Choice</button>
+            </div>
+        `;
+        document.getElementById('questions-container').insertAdjacentHTML('beforeend', questionTemplate);
+    });
+
+    document.getElementById('questions-container').addEventListener('click', function(event) {
+        if (event.target && event.target.classList.contains('add-choice-btn')) {
+            const questionIndex = event.target.getAttribute('data-question-index');
+            const choicesContainer = document.getElementById(`choices-container-${questionIndex}`);
+            const choiceIndex = choicesContainer.querySelectorAll('.form-group').length;
+            const choiceTemplate = `
+                <div class="form-group">
+                    <label for="id_choices-${questionIndex}-${choiceIndex}-choice_text">Choice ${choiceIndex + 1}:</label>
+                    <input type="text" name="choices-${questionIndex}-${choiceIndex}-choice_text" id="id_choices-${questionIndex}-${choiceIndex}-choice_text" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" name="choices-${questionIndex}-${choiceIndex}-is_correct" id="id_choices-${questionIndex}-${choiceIndex}-is_correct">
+                    <label for="id_choices-${questionIndex}-${choiceIndex}-is_correct">Correct</label>
+                </div>
+            `;
+            choicesContainer.insertAdjacentHTML('beforeend', choiceTemplate);
+        }
+    });
+});
+</script>
+
 {% endblock %}

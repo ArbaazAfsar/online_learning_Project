@@ -83,6 +83,7 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, ('you have been logged in.....'))
             return redirect('home')
         else:
             return render(request, 'courses/login.html', {'form': form, 'error': 'Invalid username or password'})
@@ -94,6 +95,7 @@ def user_login(request):
 @never_cache
 def user_logout(request):
     logout(request)
+    messages.success(request,("you have been logged out....."))
     return redirect('home')
 
 

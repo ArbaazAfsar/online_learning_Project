@@ -8,4 +8,5 @@ urlpatterns = [
     path('upload/quiz/', views.upload_quiz, name='upload_quiz'),
     path('quiz/<int:quiz_id>/edit/', views.edit_quiz, name='edit_quiz'),
     path('quiz/<int:quiz_id>/delete/', views.delete_quiz, name='delete_quiz'),
+    path('upload/success/', views.success_view, name='success_view_name'),
 ]

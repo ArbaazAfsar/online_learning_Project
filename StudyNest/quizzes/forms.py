@@ -1,5 +1,6 @@
 from django import forms
-from .models import Question, Choice,Quiz
+from .models import Question, Choice, Quiz
+from django.forms import inlineformset_factory, modelformset_factory
 
 class QuizAttemptForm(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -14,15 +15,24 @@ class QuizAttemptForm(forms.Form):
                 label=question.question_text
             )
             
-            
-            
 class QuizForm(forms.ModelForm):
     class Meta:
         model = Quiz
         fields = ['course', 'title', 'description', 'total_marks', 'passing_marks']
-        
 
-class QustionForm(forms.ModelForm):
+class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = '__all__'
+        fields = ['question_text', 'marks']
+
+class ChoiceForm(forms.ModelForm):
+    class Meta:
+        model = Choice
+        fields = ['choice_text', 'is_correct']
+
+# Create a formset for up to 20 questions
+QuestionFormSet = modelformset_factory(Question, form=QuestionForm, extra=20)
+
+# Create a formset for choices associated with each question
+ChoiceFormSet = inlineformset_factory(Question, Choice, form=ChoiceForm, extra=4, can_delete=True)
+
