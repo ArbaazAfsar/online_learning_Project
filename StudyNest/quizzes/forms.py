@@ -23,7 +23,7 @@ class QuizForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
-        fields = ['question_text', 'marks']
+        fields = '__all__'
 
 class ChoiceForm(forms.ModelForm):
     class Meta:
@@ -31,7 +31,7 @@ class ChoiceForm(forms.ModelForm):
         fields = ['choice_text', 'is_correct']
 
 # Create a formset for up to 20 questions
-QuestionFormSet = modelformset_factory(Question, form=QuestionForm, extra=20)
+QuestionFormSet = modelformset_factory(Question, form=QuestionForm)
 
 # Create a formset for choices associated with each question
 ChoiceFormSet = inlineformset_factory(Question, Choice, form=ChoiceForm, extra=4, can_delete=True)

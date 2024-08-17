@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load form_filters %}
+
+{% block heading %}
+<div class="container-fluid bg-primary py-5 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">Upload Question</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
+                        
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock heading %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Upload a New Question to {{ quiz.title }}</h2>
+    <form method="POST" id="question-form">
+        {% csrf_token %}
+        
+        <!-- Render the question form -->
+        {{ question_form.as_p }}
+        
+        <!-- Render the choice formset -->
+        <h4>Choices:</h4>
+        <div id="choices-container">
+            {{ choice_formset.management_form }}
+            {% for choice_form in choice_formset %}
+                <div class="mb-3">
+                    {{ choice_form.as_p }}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Upload Question</button>
+    </form>
+</div>
+{% endblock %}
