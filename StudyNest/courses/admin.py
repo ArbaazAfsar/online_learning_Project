@@ -6,7 +6,7 @@ class LectureInline(admin.TabularInline):
     model = Lecture
     extra = 1  # Number of empty lecture fields to display by default
     can_delete = True
-    fields = ('title', 'video_url', 'order')
+    fields = ('title', 'video_url', 'video_file', 'order')
 
 # Admin class for Course
 class CourseAdmin(admin.ModelAdmin):

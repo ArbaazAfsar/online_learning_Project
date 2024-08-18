@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Course, Lecture, CourseCategory, Enrollment
 from django.contrib.auth import login, logout, authenticate
-from .forms import CustomUserCreationForm, CourseForm, CategoryForm
+from .forms import CustomUserCreationForm, CourseForm, CategoryForm,LectureForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -48,6 +48,15 @@ def enrolled_courses(request):
     courses = [enrollment.course for enrollment in enrollments]
     
     return render(request, 'courses/enrolled_courses.html', {'courses': courses})
+
+def unenroll_course(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    enrollment = Enrollment.objects.filter(course=course, user=request.user).first()
+    
+    if enrollment:
+        enrollment.delete()
+    
+    return redirect('enrolled_courses')
 
 
 
@@ -98,6 +107,52 @@ def user_logout(request):
     messages.success(request,("you have been logged out....."))
     return redirect('home')
 
+@never_cache
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def manage_lectures(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    
+    if request.method == 'POST':
+        form = LectureForm(request.POST)
+        if form.is_valid():
+            lecture = form.save(commit=False)
+            lecture.course = course
+            lecture.save()
+            return redirect('lecture_detail', pk=course_id)
+    else:
+        form = LectureForm()
+
+    lectures = Lecture.objects.filter(course=course)
+    return render(request, 'courses/manage_lectures.html', {'course': course, 'lectures': lectures, 'form': form})
+
+
+@login_required
+def edit_lecture(request, lecture_id):
+    # Fetch the lecture object
+    lecture = get_object_or_404(Lecture, id=lecture_id)
+    
+    if request.method == 'POST':
+        # Instantiate the form with POST data and any uploaded files
+        form = LectureForm(request.POST, request.FILES, instance=lecture)
+        if form.is_valid():
+            form.save()
+            return redirect('lecture_detail', pk=lecture.course.id)
+    else:
+        # Instantiate the form with the lecture instance for GET requests
+        form = LectureForm(instance=lecture)
+    
+    return render(request, 'courses/edit_lecture.html', {'form': form, 'lecture': lecture})
+
+
+@login_required
+def delete_lecture(request, lecture_id):
+    lecture = get_object_or_404(Lecture, id=lecture_id)
+    if request.method == 'POST':
+        course_id = lecture.course.id
+        lecture.delete()
+        return redirect('lecture_detail', pk=course_id)
+    return render(request, 'courses/confirm_delete.html', {'lecture': lecture})
 
 
 def about(request):

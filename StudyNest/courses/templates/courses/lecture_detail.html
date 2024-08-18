@@ -4,20 +4,28 @@
 <div class="container mt-5">
   <div class="card-body mb-4 shadow-sm">
     <h1 class="card-title mb-4">{{ course.title }}</h1>
-    <h5 class="card-text mb-4"> {{ course.description }}</h5>
+    <h5 class="card-text mb-4">{{ course.description }}</h5>
+    <!-- Button to manage lectures -->
+    {% if user.is_superuser %}
+      <a href="{% url 'manage_lectures' course.id %}" class="btn btn-primary mb-4">Manage Lectures</a>
+    {% endif %}
   </div>
-
-
 
   {% for lecture in lectures %}
   <div class="card mb-4 shadow-sm">
     <div class="card-body">
       <h2 class="card-title">{{ lecture.title }}</h2>
       <p class="card-text">{{ lecture.description }}</p>
-      {% if lecture.video_url %}
-        <div class="ratio ratio-16x9 mb-3">
-          <iframe src="{{ lecture.video_url }}" title="Lecture video: {{ lecture.title }}" allowfullscreen></iframe>
-        </div>
+      {% if lecture.video_file  %}
+      <video controls class="w-100">
+        <source src="{{ lecture.video_file.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+        
+      {% elif lecture.video_url %}
+      <div class="ratio ratio-16x9 mb-3">
+        <iframe src="{{ lecture.video_url }}" title="Lecture video: {{ lecture.title }}" allowfullscreen></iframe>
+      </div>
       {% else %}
         <p class="text-muted">No video available for this lecture.</p>
       {% endif %}
@@ -25,6 +33,6 @@
   </div>
   {% empty %}
     <p>No lectures found for this course.</p>
-{% endfor %}
+  {% endfor %}
 </div>
-{% endblock content %}
+{% endblock %}

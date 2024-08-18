@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser,Group,Permission
 from django.core.validators import EmailValidator
+from django.core.validators import FileExtensionValidator
 
 
 class CourseCategory(models.Model):
@@ -30,14 +31,15 @@ class Lecture(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     video_url = models.URLField(blank=True, null=True)
+    video_file = models.FileField(upload_to='lectures/videos/', blank=True, null=True, validators=[FileExtensionValidator(['mp4', 'mov', 'avi'])])
     order = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        ordering = ['order']
+    def has_video(self):
+        return bool(self.video_url or self.video_file)
 
     def __str__(self):
-        return f"{self.course}-{self.order}"
+        return self.title
     
     
     

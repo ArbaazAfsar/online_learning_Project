@@ -26,19 +26,21 @@
     <div class="row">
         {% for course in courses %}
         <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
-            <div class="course-item bg-light">
+            <div class="course-item bg-light" style="margin-top: 20px; box-shadow: 5px 5px 10px 5px">
                 <div class="position-relative overflow-hidden">
-                    <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }}">
+                    <img src="{{ course.image.url }}" class="img-fluid" alt="{{ course.title }}" style="height: 300px; width: 100%;" >
                 </div>
                 <div class="text-center p-4 pb-0">
                     <h5 class="mb-4">{{ course.title }}</h5>
                     <div class="mb-3">
                         <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;" onclick="toggleDescription(event, 'desc-{{ course.id }}')">Read More</a>
-                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Open</a>
+                        <a href="{% url 'lecture_detail' pk=course.pk %}" class="flex-shrink-0 btn btn-sm btn-secondary px-3" style="border-radius: 0; ">Open</a>
+                        <a href="{% url 'unenroll_course' course.id %}" class="flex-shrink-0 btn btn-sm btn-danger px-3" style="border-radius: 0 30px 30px 0;">Unenroll</a>
                     </div>
                     <div id="desc-{{ course.id }}" class="course-description" style="display: none;">
                         <p>{{ course.description }}</p>
                     </div>
+        
                 </div>
                 <div class="d-flex border-top">
                     <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>{{ course.instructor }}</small>
