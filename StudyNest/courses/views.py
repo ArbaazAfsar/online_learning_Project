@@ -58,7 +58,10 @@ def unenroll_course(request, course_id):
     
     return redirect('enrolled_courses')
 
-
+def course_quizzes(request, course_id):
+    course = get_object_or_404(Course, pk=course_id)
+    quizzes = course.quizzes.all()  # Assuming 'quizzes' is a related name for quizzes in the Course model
+    return render(request, 'courses/course_quizzes.html', {'course': course, 'quizzes': quizzes})
 
 @never_cache
 @login_required(login_url='/login/')

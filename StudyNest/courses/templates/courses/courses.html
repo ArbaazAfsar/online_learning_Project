@@ -52,13 +52,12 @@
                         <a href="{% url 'enroll_course' course_id=course.id %}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Enroll</a>
                     {% endif %}
             
-                  <!-- Quiz Buttons (if quizzes are available) -->
-                  {% if course.quizzes.exists %}
-                  <div class="d-flex mt-3">
-                      <a href="{% url 'quiz_detail' course_id=course.id quiz_id=course.quizzes.first.id %}" class="btn btn-sm btn-warning flex-fill">Attend Quiz</a>
-                      <a href="{% url 'quiz_result' course_id=course.id quiz_id=course.quizzes.first.id %}" class="btn btn-sm btn-info flex-fill">Quiz Result</a>
-                  </div>
-              {% endif %}
+                    <!-- Quiz Buttons (if quizzes are available) -->
+                    {% if course.quizzes.exists %}
+                    <div class="d-flex mt-3">
+                        <a href="{% url 'course_quizzes' course_id=course.id %}" class="btn btn-sm btn-warning flex-fill">Quizzes</a>  <!-- Updated link -->
+                    </div>
+                    {% endif %}
                 {% else %}
                     <p class="text-center"><a href="{% url 'login' %}">Log in</a> to enroll.</p>
                 {% endif %}
