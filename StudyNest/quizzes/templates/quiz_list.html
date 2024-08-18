@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>All Quizzes</h2>
+    
+    {% for course in courses %}
+        <div class="course-section">
+            <h3>{{ course.title }}</h3>
+            <ul>
+                {% for quiz in course.quizzes.all %}
+                    <li>
+                        {{ quiz.title }} 
+                        <a href="{% url 'question_list' course.id quiz.id %}">View</a>
+                        <a href="{% url 'edit_quiz' course.id quiz.id %}">Edit</a>
+                        <a href="{% url 'delete_quiz' course.id quiz.id %}">Delete</a>
+                    </li>
+                {% empty %}
+                    <p>No quizzes available for this course.</p>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+<a href="{% url 'upload_quiz' %}" class="btn btn-success" >upload quiz</a>
+
+</div>
+{% endblock %}

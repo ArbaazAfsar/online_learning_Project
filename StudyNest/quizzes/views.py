@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Quiz, StudentQuizAttempt
-from .forms import QuizAttemptForm,QuizForm, Question, QuestionForm, Quiz, ChoiceFormSet ,ChoiceForm, Choice,QuestionFormSet
+from .forms import QuizAttemptForm,QuizForm, Question, QuestionForm, Quiz, ChoiceFormSet,ChoiceFormSet0 ,ChoiceForm, Choice,QuestionFormSet
 from courses.models import Course
 from django.contrib.auth.decorators import user_passes_test
 from django.forms import inlineformset_factory
@@ -10,37 +10,137 @@ import random
 from django.contrib import messages
 
 
+#@login_required
+# def quiz_detail(request, course_id, quiz_id):
+#     quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
+    
+#     questions = list(quiz.questions.all())
+#     random_questions = random.sample(questions, 10) if len(questions) >= 10 else questions
+    
+#     if request.method == 'POST':
+#         form = QuizAttemptForm(request.POST, questions=random_questions)
+#         if form.is_valid():
+#             score = 0
+#             total_marks = 0
+            
+#             for question in random_questions:
+#                 selected_choice_id = form.cleaned_data.get(f'question_{question.id}')
+#                 if selected_choice_id:
+#                     selected_choice = question.choices.filter(id=selected_choice_id).first()
+#                     if selected_choice and selected_choice.is_correct:
+#                         score += question.marks
+#                     total_marks += question.marks
+            
+#             passed = score >= quiz.passing_marks
+#             StudentQuizAttempt.objects.create(
+#                 student=request.user,
+#                 quiz=quiz,
+#                 score=score,
+#                 passed=passed
+#             )
+            
+#             return redirect('quiz_result', course_id=course_id, quiz_id=quiz.id)
+#         else:
+#             print(form.errors)  # Debug form errors
+#     else:
+#         form = QuizAttemptForm(questions=random_questions)
+
+#     field_question_map = {field.name: field.name.split('_')[1] for field in form}
+    
+#     return render(request, 'quiz_detail.html', {
+#         'quiz': quiz,
+#         'form': form,
+#         'field_question_map': field_question_map
+#     })
 @login_required
 def quiz_detail(request, course_id, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id, course__id=course_id)
+    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
     
-    # Get all questions related to the quiz
-    questions = list(quiz.questions.all())
-    
-    # Randomly select 10 questions
-    random_questions = random.sample(questions, 10) if len(questions) >= 10 else questions
+    # Get all questions for the quiz
+    questions = quiz.questions.all()
     
     if request.method == 'POST':
-        form = QuizAttemptForm(request.POST, questions=random_questions)
+        form = QuizAttemptForm(request.POST, questions=questions)
         if form.is_valid():
             score = 0
             total_marks = 0
-            for question in random_questions:
+            
+            for question in questions:
                 selected_choice_id = form.cleaned_data.get(f'question_{question.id}')
-                selected_choice = question.choices.filter(id=selected_choice_id).first()
-                if selected_choice and selected_choice.is_correct:
-                    score += question.marks
-                total_marks += question.marks
+                if selected_choice_id:
+                    selected_choice = question.choices.filter(id=selected_choice_id).first()
+                    if selected_choice and selected_choice.is_correct:
+                        score += question.marks
+                    total_marks += question.marks
             
             passed = score >= quiz.passing_marks
-            StudentQuizAttempt.objects.create(student=request.user, quiz=quiz, score=score, passed=passed)
+            StudentQuizAttempt.objects.create(
+                student=request.user,
+                quiz=quiz,
+                score=score,
+                passed=passed
+            )
             
             return redirect('quiz_result', course_id=course_id, quiz_id=quiz.id)
+        else:
+            print(form.errors)  # Debug form errors
     else:
-        form = QuizAttemptForm(questions=random_questions)
-    
-    return render(request, 'quiz_detail.html', {'quiz': quiz, 'form': form})
+        form = QuizAttemptForm(questions=questions)
 
+    field_question_map = {field.name: field.name.split('_')[1] for field in form}
+    
+    return render(request, 'quiz_detail.html', {
+        'quiz': quiz,
+        'form': form,
+        'field_question_map': field_question_map
+    })
+
+
+def question_list(request, course_id, quiz_id):
+    print(f"Course ID: {course_id}, Quiz ID: {quiz_id}")
+    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
+    
+    # Get all questions for the quiz
+    questions = quiz.questions.all()
+    
+    if request.method == 'POST':
+        form = QuizAttemptForm(request.POST, questions=questions)
+        if form.is_valid():
+            score = 0
+            total_marks = 0
+            
+            for question in questions:
+                selected_choice_id = form.cleaned_data.get(f'question_{question.id}')
+                if selected_choice_id:
+                    selected_choice = question.choices.filter(id=selected_choice_id).first()
+                    if selected_choice and selected_choice.is_correct:
+                        score += question.marks
+                    total_marks += question.marks
+            
+            passed = score >= quiz.passing_marks
+            StudentQuizAttempt.objects.create(
+                student=request.user,
+                quiz=quiz,
+                score=score,
+                passed=passed
+            )
+            
+            return redirect('quiz_result', course_id=course_id, quiz_id=quiz.id)
+        else:
+            print(form.errors)  # Debug form errors
+    else:
+        form = QuizAttemptForm(questions=questions)
+
+    field_question_map = {field.name: field.name.split('_')[1] for field in form}
+    
+    return render(request, 'question_list.html', {
+        'quiz': quiz,
+        'form': form,
+        'field_question_map': field_question_map
+    })
+    
+    
+    
 @login_required
 def quiz_result(request, course_id, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -73,7 +173,161 @@ def superuser_required(view_func):
 
 
 
+
+
 @superuser_required
+def upload_quiz(request):
+    if request.method == 'POST':
+        quiz_form = QuizForm(request.POST)
+        
+        if quiz_form.is_valid():
+            quiz = quiz_form.save()  # Save and get the single Quiz instance
+            messages.success(request, 'Quiz uploaded successfully!')
+            return redirect('upload_question', quiz_id=quiz.id)  # Redirect with quiz_id
+        else:
+            messages.error(request, 'The quiz form is not valid.')
+    else:
+        quiz_form = QuizForm()  # Initialize the form in GET request
+
+    return render(request, 'upload_quiz.html', {'quiz_form': quiz_form})
+        
+
+def upload_question(request, quiz_id):
+    quiz = Quiz.objects.get(id=quiz_id)
+    
+    if request.method == 'POST':
+        question_form = QuestionForm(request.POST)
+        print(question_form)
+        if question_form.is_valid():
+            question = question_form.save(commit=False)
+            question.quiz = quiz
+            question.save()
+            choice_formset = ChoiceFormSet(request.POST, instance=question)
+            if choice_formset.is_valid():
+                choice_formset.save()
+                messages.success(request, 'Question and choices uploaded successfully! add another question')
+                # Assume that you have a way to get course_id related to the quiz
+                course_id = quiz.course.id
+                return redirect('upload_question', quiz_id=quiz.id)
+                # return redirect('quiz_detail', course_id=course_id, quiz_id=quiz.id)
+            else:
+                messages.error(request, 'There was an error with the choices.')
+        else:
+            messages.error(request, 'There was an error with the question.')
+    else:
+        question_form = QuestionForm()
+        choice_formset = ChoiceFormSet()
+
+    return render(request, 'upload_question.html', {
+        'quiz': quiz,
+        'question_form': question_form,
+        'choice_formset': choice_formset,
+    })
+    
+ 
+ 
+def course_quizzes_view(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    quizzes = Quiz.objects.filter(course=course)
+
+    return render(request, 'course_quizzes.html', {'course': course,'quizzes': quizzes,})   
+
+
+
+
+def quiz_list_view(request):
+    # Retrieve all courses with their associated quizzes
+    courses = Course.objects.prefetch_related('quizzes').all()
+
+    context = {
+        'courses': courses,
+    }
+
+    return render(request, 'quiz_list.html', context)
+
+
+
+    
+
+@superuser_required
+def edit_quiz_view(request, course_id, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
+    
+    if request.method == 'POST':
+        form = QuizForm(request.POST, instance=quiz)
+        if form.is_valid():
+            form.save()
+            return redirect('quiz_list')  # Assuming 'quiz_list' is the name of the URL for listing quizzes
+    else:
+        form = QuizForm(instance=quiz)
+    
+    return render(request, 'edit_quiz.html', {'form': form, 'quiz': quiz})
+
+@superuser_required
+def delete_quiz_view(request, course_id, quiz_id):
+    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
+    
+    if request.method == 'POST':
+        quiz.delete()
+        return redirect('quiz_list')  # Assuming 'quiz_list' is the name of the URL for listing quizzes
+    
+    return render(request, 'delete_quiz_confirm.html', {'quiz': quiz})
+
+
+
+@login_required
+@superuser_required
+def edit_question_view(request, course_id, quiz_id, question_id):
+    question = get_object_or_404(Question, id=question_id, quiz__id=quiz_id, quiz__course__id=course_id)
+    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
+    
+    if request.method == 'POST':
+        form = QuestionForm(request.POST, instance=question)
+        formset = ChoiceFormSet0(request.POST, instance=question)
+        
+        if form.is_valid() and formset.is_valid():
+            question = form.save(commit=False)
+            question.quiz = quiz  # Ensure the quiz field is set
+            question.save()
+            formset.save()
+            messages.success(request, 'Question updated successfully.')
+            return redirect('question_list', course_id=quiz.course.id, quiz_id=quiz.id)
+        else:
+            print('Form errors:', form.errors)
+            print('Formset errors:', formset.errors)
+    else:
+        form = QuestionForm(instance=question)
+        formset = ChoiceFormSet0(instance=question)
+
+    return render(request, 'edit_question.html', {
+        'form': form,
+        'formset': formset,
+        'question': question,
+        'quiz': quiz
+    })
+    
+    
+    
+@login_required
+@superuser_required
+def delete_question_view(request, course_id, quiz_id, question_id):
+    question = get_object_or_404(Question, id=question_id, quiz__id=quiz_id, quiz__course__id=course_id)
+    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
+    if request.method == 'POST':
+        question.delete()
+        messages.success(request, 'Question deleted successfully.')
+        return redirect('question_list', course_id=quiz.course.id, quiz_id=quiz.id)
+    
+    return render(request, 'delete_question_confirm.html', {'question': question,'quiz': quiz})
+
+
+
+
+def success_view(request):
+    return render(request, 'success.html', {'message': 'Operation completed successfully!'})
+
+
+#@superuser_required
 # def upload_quiz(request):
 #     if request.method == 'POST':
 #         quiz_form = QuizForm(request.POST)
@@ -108,105 +362,55 @@ def superuser_required(view_func):
 #         'question_formset': question_formset,
 #         'choice_formsets': choice_formsets,
 #     })
-def upload_question(request, quiz_id):
-    quiz = Quiz.objects.get(id=quiz_id)
-    
-    if request.method == 'POST':
-        question_form = QuestionForm(request.POST)
-        if question_form.is_valid():
-            question = question_form.save(commit=False)
-            question.quiz = quiz
-            question.save()
-            
-            choice_formset = ChoiceFormSet(request.POST, instance=question)
-            if choice_formset.is_valid():
-                choice_formset.save()
-                messages.success(request, 'Question and choices uploaded successfully!')
-                # Assume that you have a way to get course_id related to the quiz
-                course_id = quiz.course.id
-                return redirect('quiz_detail', course_id=course_id, quiz_id=quiz.id)
-            else:
-                messages.error(request, 'There was an error with the choices.')
-        else:
-            messages.error(request, 'There was an error with the question.')
-    else:
-        question_form = QuestionForm()
-        choice_formset = ChoiceFormSet()
 
-    return render(request, 'upload_question.html', {
-        'quiz': quiz,
-        'question_form': question_form,
-        'choice_formset': choice_formset,
-    })
     
+# def quiz_detail_view(request, course_id, quiz_id):
+#     # Retrieve the quiz object
+#     quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
     
-    
-@superuser_required
-def upload_quiz(request):
-    if request.method == 'POST':
-        quiz_form = QuizForm(request.POST)
-        
-        if quiz_form.is_valid():
-            quiz = quiz_form.save()  # Save and get the single Quiz instance
-            messages.success(request, 'Quiz uploaded successfully!')
-            return redirect('upload_question', quiz_id=quiz.id)  # Redirect with quiz_id
-        else:
-            messages.error(request, 'The quiz form is not valid.')
-    else:
-        quiz_form = QuizForm()  # Initialize the form in GET request
+#     # Fetch all the questions related to this quiz
+#     questions = quiz.questions.all()
 
-    return render(request, 'upload_quiz.html', {'quiz_form': quiz_form})
-        
+#     # Create a form for quiz attempt if it's a POST request
+#     if request.method == 'POST':
+#         form = QuizAttemptForm(request.POST, questions=questions)
+#         if form.is_valid():
+#             # Process the form and evaluate the quiz
+#             # (You can add logic to calculate scores, save the attempt, etc.)
+#             # Redirect to a results page or show the result directly
+#             return redirect('quiz_result', course_id=course_id, quiz_id=quiz.id)
+#     else:
+#         # Initialize the form for a GET request
+#         form = QuizAttemptForm(questions=questions)
+    
+#     context = {
+#         'quiz': quiz,
+#         'form': form,
+#     }
+
+#     return render(request, 'quiz_detail.html', context)
 
 
-def quiz_detail_view(request, course_id, quiz_id):
-    # Retrieve the quiz object
-    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
-    
-    # Fetch all the questions related to this quiz
-    questions = quiz.questions.all()
 
-    # Create a form for quiz attempt if it's a POST request
-    if request.method == 'POST':
-        form = QuizAttemptForm(request.POST, questions=questions)
-        if form.is_valid():
-            # Process the form and evaluate the quiz
-            # (You can add logic to calculate scores, save the attempt, etc.)
-            # Redirect to a results page or show the result directly
-            return redirect('quiz_result', course_id=course_id, quiz_id=quiz.id)
-    else:
-        # Initialize the form for a GET request
-        form = QuizAttemptForm(questions=questions)
     
-    context = {
-        'quiz': quiz,
-        'form': form,
-    }
-
-    return render(request, 'quiz_detail.html', context)
-
-
-def success_view(request):
-    return render(request, 'success.html', {'message': 'Operation completed successfully!'})
+# @superuser_required
+# def edit_quiz(request, quiz_id):
+#     quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
     
-@superuser_required
-def edit_quiz(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
+#     if request.method == 'POST':
+#         form = QuizForm(request.POST, instance=quiz)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('my_courses')
+#     else:
+#         form = QuizForm(instance=quiz)
     
-    if request.method == 'POST':
-        form = QuizForm(request.POST, instance=quiz)
-        if form.is_valid():
-            form.save()
-            return redirect('my_courses')
-    else:
-        form = QuizForm(instance=quiz)
-    
-    return render(request, 'edit_quiz.html', {'form': form, 'quiz': quiz})
+#     return render(request, 'edit_quiz.html', {'form': form, 'quiz': quiz})
 
-@superuser_required
-def delete_quiz(request, quiz_id):
-    quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
-    if request.method == 'POST':
-        quiz.delete()
-        return redirect('my_courses')
-    return render(request, 'delete_quiz_confirm.html', {'quiz': quiz})
+# @superuser_required
+# def delete_quiz(request, quiz_id):
+#     quiz = get_object_or_404(Quiz, id=quiz_id, course__instructor=request.user)
+#     if request.method == 'POST':
+#         quiz.delete()
+#         return redirect('my_courses')
+#     return render(request, 'delete_quiz_confirm.html', {'quiz': quiz})

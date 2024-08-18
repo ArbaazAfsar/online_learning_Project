@@ -72,12 +72,14 @@
     <h2 class="quiz-title">{{ quiz.title }}</h2>
     <p class="lead quiz-description">{{ quiz.description }}</p>
 
-    <form method="POST" class="quiz-form" action="">
+    <form method="POST" class="quiz-form">
         {% csrf_token %}
         {{ form.non_field_errors }}
+        
         {% for field in form %}
             <div class="form-group">
-                {{ field.label_tag }}
+                <h4>Question {{ forloop.counter }}: {{ field.label_tag }}</h4>
+                <br>
                 {{ field }}
                 {% if field.errors %}
                     <div class="text-danger">
@@ -88,6 +90,7 @@
                 {% endif %}
             </div>
         {% endfor %}
+        
         <button type="submit" class="btn btn-primary">Submit Quiz</button>
     </form>
 </div>

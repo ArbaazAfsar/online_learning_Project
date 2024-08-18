@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+
+
+<div class="container mt-5 quiz-container">
+    <h2 class="quiz-title">{{ quiz.title }}</h2>
+    <p class="lead quiz-description">{{ quiz.description }}</p>
+
+    <form method="POST" class="quiz-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        
+        {% for field in form %}
+            <div class="form-group">
+                <h4>Question {{ forloop.counter }}: {{ field.label_tag }}</h4>
+                <br>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="text-danger">
+                        {% for error in field.errors %}
+                            <small>{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if user.is_superuser %}
+                <div class="mt-2">
+                    <!-- Debugging: Output the user status -->
+                    <p>User is superuser: {{ user.is_superuser }}</p>
+                    
+                    <!-- Debugging: Output the field name and question_id -->
+                    <p>Field Name: {{ field.name }}</p>
+                    <p>Question ID: {{ field_question_map|get_item:field.name }}</p>
+                    
+                    <a href="{% url 'edit_question' course_id=quiz.course.id quiz_id=quiz.id question_id=field_question_map|get_item:field.name %}" class="btn btn-secondary btn-sm">Edit Question</a>
+                    <a href="{% url 'delete_question' course_id=quiz.course.id quiz_id=quiz.id question_id=field_question_map|get_item:field.name %}" class="btn btn-danger btn-sm">Delete Question</a>
+                </div>
+            {% else %}
+                <p>You are not a superuser.</p>
+            {% endif %}
+            </div>
+        {% endfor %}
+    </form>
+</div>
+{% endblock %}
