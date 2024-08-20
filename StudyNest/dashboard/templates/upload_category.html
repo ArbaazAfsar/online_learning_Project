@@ -1,12 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+    }
+    
+    form {
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    form input[type="text"],
+    form input[type="file"],
+    form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+    }
+    
+    form button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+    
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+</style>
+
+
+
+
 <div class="container mt-5">
     <h2 class="mb-4">Upload Category</h2>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Upload</button>
+        <button type="submit" class="btn btn-primary mt-3">Upload</button>
     </form>
 </div>
 {% endblock %}

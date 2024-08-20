@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+
+{% block title %}All Quizzes{% endblock %}
 {% block heading %}
 <div class="container-fluid bg-primary py-5 mb-5 page-header">
     <div class="container py-5">
@@ -9,6 +11,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
                         <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">All Quizzes</li>
                     </ol>
                 </nav>
             </div>
@@ -19,8 +22,17 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center mb-4">All Quizzes</h2>
+    <h2 class="text-center mb-4">Upload Quiz</h2>
+    {% if user.is_superuser %}
+        <div class="text-center mb-4">
+            <a href="{% url 'upload_quiz' %}" class="btn btn-success">Upload Quiz</a>
+        </div>
+    {% endif %}
+    <br>
+    <br>
+    <br>
 
+    <h2 class="text-center mb-4">All Quizzes</h2>
     {% for course in courses %}
         <div class="course-section mb-4 p-3 bg-light rounded shadow-sm">
             <h3 class="text-primary">{{ course.title }}</h3>
@@ -42,12 +54,6 @@
             </ul>
         </div>
     {% endfor %}
-
-    {% if user.is_superuser %}
-        <div class="text-center">
-            <a href="{% url 'upload_quiz' %}" class="btn btn-success mt-4">Upload Quiz</a>
-        </div>
-    {% endif %}
 </div>
 {% endblock %}
 

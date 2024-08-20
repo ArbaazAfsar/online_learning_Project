@@ -278,33 +278,38 @@ def delete_quiz_view(request, course_id, quiz_id):
 @login_required
 @superuser_required
 def edit_question_view(request, course_id, quiz_id, question_id):
-    question = get_object_or_404(Question, id=question_id, quiz__id=quiz_id, quiz__course__id=course_id)
-    quiz = get_object_or_404(Quiz, id=quiz_id, course_id=course_id)
-    
+    question = get_object_or_404(Question, id=question_id, quiz_id=quiz_id)
+    quiz = Quiz.objects.get(id=quiz_id)
     if request.method == 'POST':
         form = QuestionForm(request.POST, instance=question)
-        formset = ChoiceFormSet0(request.POST, instance=question)
-        
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             question = form.save(commit=False)
-            question.quiz = quiz  # Ensure the quiz field is set
+            question.quiz = quiz
+            question.quiz_id = quiz_id  # Set the quiz_id manually
             question.save()
-            formset.save()
-            messages.success(request, 'Question updated successfully.')
-            return redirect('question_list', course_id=quiz.course.id, quiz_id=quiz.id)
+            return redirect('question_list', course_id=course_id, quiz_id=quiz_id)
         else:
-            print('Form errors:', form.errors)
-            print('Formset errors:', formset.errors)
+            print(form.errors)  # For debugging purposes
     else:
         form = QuestionForm(instance=question)
-        formset = ChoiceFormSet0(instance=question)
+    
+    context = {'form': form, 'quiz': question.quiz}
+    return render(request, 'edit_question.html', context)
 
-    return render(request, 'edit_question.html', {
-        'form': form,
-        'formset': formset,
-        'question': question,
-        'quiz': quiz
-    })
+
+
+def edit_choices_view(request, course_id, quiz_id, question_id):
+    question = get_object_or_404(Question, id=question_id, quiz_id=quiz_id)
+    ChoiceFormSet = modelformset_factory(Choice, form=ChoiceForm, extra=0, can_delete=True)
+    formset = ChoiceFormSet(queryset=Choice.objects.filter(question=question))
+
+    if request.method == 'POST':
+        formset = ChoiceFormSet(request.POST, queryset=Choice.objects.filter(question=question))
+        if formset.is_valid():
+            formset.save()
+            return redirect('question_list', course_id=course_id, quiz_id=quiz_id)
+    context = {'formset': formset, 'quiz': question.quiz}
+    return render(request, 'edit_choices.html', context)
     
     
     

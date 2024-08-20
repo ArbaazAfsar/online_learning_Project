@@ -10,7 +10,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
 
 def home(request):
-    return render(request, 'courses/home.html')
+    # Fetch all categories and their related courses
+    categories = CourseCategory.objects.prefetch_related('courses').all()
+
+    # Pass the data to the template
+    return render(request, 'courses/home.html', {'categories': categories})
 
 @never_cache
 def course_category(request):

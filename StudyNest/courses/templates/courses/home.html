@@ -1,12 +1,7 @@
 {% extends 'base.html' %}
-
-{% block content %}
 {% load static %}
 
-
-
-
-
+{% block content %}
 <!-- Service Start -->
 <div class="container-xxl py-5">
     <div class="container">
@@ -52,12 +47,104 @@
 </div>
 <!-- Service End -->
 
+<!-- Courses by Category Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Courses by Category</h2>
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-lg-4 col-md-6 mb-4" >
+                <h3 class="text-primary mb-4">{{ category.name }}</h3>
+                <div id="carouselCategory{{ category.id }}" class="carousel slide" style="margin-top: 20px; box-shadow: 5px 5px 10px 5px;">
+                    <div class="carousel-inner">
+                        {% for course in category.courses.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="course-box">
+                                <img src="{{ course.image.url }}" class="d-block w-100" alt="{{ course.title }}" style="height: 250px;">
+                                <div class="course-details">
+                                    <h5>{{ course.title }}</h5>
+                                    <a href="{% url 'lecture_detail' pk=course.pk %}" class="btn btn-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselCategory{{ category.id }}" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselCategory{{ category.id }}" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Courses by Category End -->
 
+<style>
+    .carousel-item {
+        position: relative;
+        z-index: 1; /* Ensure carousel items are on a lower layer */
+    }
 
+    .course-box {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        background-color: #fff;
+        position: relative; /* Required for z-index to work */
+        z-index: 2; /* Layer above carousel items */
+    }
 
+    .course-box img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+    }
 
+    .course-details {
+        padding: 15px;
+        text-align: center;
+        z-index: 3; /* Ensure the details are above the course box */
+        position: relative; /* Required for z-index to work */
+    }
+
+    .course-details h5 {
+        margin-top: 0;
+        font-size: 1.25rem;
+    }
+
+    .course-details a.btn {
+        margin-top: 10px;
+        z-index: 4; /* Bring the button above all other elements */
+        position: relative; /* Required for z-index to work */
+    }
+
+    .carousel-control-prev, .carousel-control-next {
+        width: 5%;
+        z-index: 5; /* Ensure controls are on the top layer */
+        position: absolute; /* Required for z-index to work */
+    }
+
+    .carousel-control-prev-icon, .carousel-control-next-icon {
+        background-color: rgba(0, 0, 0, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .carousel-item {
+            padding: 0 10px;
+        }
+
+        .carousel-control-prev, .carousel-control-next {
+            width: 8%;
+        }
+    }
+</style>
 
 {% endblock content %}
-
-
     
