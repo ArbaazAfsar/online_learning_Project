@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Course, CourseCategory, Lecture
+from .models import Course, CourseCategory, Lecture,Review
 
 # Inline class for Lecture
 class LectureInline(admin.TabularInline):
@@ -20,6 +20,15 @@ class CourseCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'course_count')
     search_fields = ('name',)
     list_filter = ('name',)
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('user', 'rating', 'created_at')
+    search_fields = ('content',)
+    list_filter = ('rating', 'created_at')
+
+
 
 # Registering models with the admin site
 admin.site.register(Course, CourseAdmin)

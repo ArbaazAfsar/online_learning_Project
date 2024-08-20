@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
-from courses.forms import CategoryForm,CourseForm, CategoryForm
+from courses.forms import CategoryForm,CourseForm, CategoryForm,ReviewForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
-from courses.models import Course
+from courses.models import Course,Review
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -114,3 +114,19 @@ def upload_course(request):
     else:
         form = CourseForm()
     return render(request, 'upload_course.html', {'form': form})
+
+
+@login_required
+@superuser_required
+def review_management(request):
+    reviews = Review.objects.all()
+    return render(request, 'review_management.html', {'reviews': reviews})
+
+@login_required
+@superuser_required
+def delete_review(request, review_id):
+    review = get_object_or_404(Review, id=review_id)
+    if request.method == 'POST':
+        review.delete()
+        return redirect('review_management')  # Redirect to the management page after deletion
+    return render(request, 'review_confirm_delete.html', {'review': review})

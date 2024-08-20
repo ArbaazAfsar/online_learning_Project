@@ -1,8 +1,10 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser,Group,Permission
+from django.contrib.auth.models import AbstractUser,Group,Permission,User
 from django.core.validators import EmailValidator
 from django.core.validators import FileExtensionValidator
+from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class CourseCategory(models.Model):
@@ -24,6 +26,9 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
+    def student_count(self):
+        return self.enrollments.count()
     
 
 class Lecture(models.Model):
@@ -53,6 +58,17 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.user} enrolled in {self.course}"
+    
+    
+    
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()  # Main content of the review
+    rating = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])  # Rating given by the user # Rating given by the user
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when the review was created
+
+    def __str__(self):
+        return f"Review by {self.user.username}"
     
     
 

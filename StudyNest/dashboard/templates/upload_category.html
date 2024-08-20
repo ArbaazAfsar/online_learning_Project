@@ -1,12 +1,25 @@
 {% extends 'base.html' %}
 
+{% block heading %}
+<div class="container-fluid bg-primary py-5 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">Upload category </h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock heading %}
+
 {% block content %}
 <style>
-    h2 {
-        font-size: 24px;
-        font-weight: 600;
-        color: #333;
-    }
+
     
     form {
         background-color: #f8f9fa;

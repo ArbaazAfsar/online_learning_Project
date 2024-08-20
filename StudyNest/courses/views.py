@@ -1,20 +1,28 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Course, Lecture, CourseCategory, Enrollment
+from .models import Course, Lecture, CourseCategory, Enrollment, Review
 from django.contrib.auth import login, logout, authenticate
-from .forms import CustomUserCreationForm, CourseForm, CategoryForm,LectureForm
+from .forms import CustomUserCreationForm, CourseForm, CategoryForm,LectureForm,ReviewForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic.edit import FormView
+from django.views.generic import ListView
+
+
+def superuser_required(view_func):
+    """Decorator to ensure only superusers can access the view."""
+    decorated_view_func = user_passes_test(lambda u: u.is_superuser)(view_func)
+    return decorated_view_func
 
 def home(request):
-    # Fetch all categories and their related courses
     categories = CourseCategory.objects.prefetch_related('courses').all()
-
-    # Pass the data to the template
-    return render(request, 'courses/home.html', {'categories': categories})
+    reviews = Review.objects.all()
+    return render(request, 'courses/home.html', {'categories': categories,'reviews': reviews})
 
 @never_cache
 def course_category(request):
@@ -160,6 +168,24 @@ def delete_lecture(request, lecture_id):
         lecture.delete()
         return redirect('lecture_detail', pk=course_id)
     return render(request, 'courses/confirm_delete.html', {'lecture': lecture})
+
+@login_required
+def review_view(request):
+    
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+            return redirect('reviews')  # Redirect after successful form submission
+    else:
+        form = ReviewForm()
+    
+    reviews = Review.objects.all() 
+    print("Reviews fetched:", reviews)
+    return render(request, 'courses/review_page.html', {'form': form, 'reviews': reviews})
+
 
 
 def about(request):

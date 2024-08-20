@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Enrollment,Course,CourseCategory,Lecture
+from .models import Enrollment,Course,CourseCategory,Lecture,Review
 from django.contrib.auth.models import User
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -34,3 +35,18 @@ class LectureForm(forms.ModelForm):
     class Meta:
         model = Lecture
         fields = ['title', 'description', 'video_url', 'video_file', 'order']
+        
+        
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['content', 'rating']
+        widgets = {
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'rating': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 5}),
+        }
+    
+    rating = forms.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': 5})
+    )

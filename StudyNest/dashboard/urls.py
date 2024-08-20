@@ -10,5 +10,7 @@ urlpatterns = [
     path('upload/course/', views.upload_course, name='upload_course'),
     path('course/<int:course_id>/edit/', views.edit_course, name='edit_course'),
     path('course/<int:course_id>/delete/', views.delete_course, name='delete_course'),
+    path('reviews/', views.review_management, name='review_management'),
+    path('reviews/delete/<int:review_id>/', views.delete_review, name='delete_review'),
     
 ]

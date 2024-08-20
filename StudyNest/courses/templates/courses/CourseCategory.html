@@ -13,9 +13,7 @@
                 <h1 class="display-3 text-white animated slideInDown">Courses</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
-                        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
-                        <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
-                        <li class="breadcrumb-item text-white active" aria-current="page">Courses</li>
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
                     </ol>
                 </nav>
             </div>
@@ -47,7 +45,7 @@
                         
                         <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin:  1px;">
                             <h5 class="m-0">{{cats.name}}</h5>
-                            <small class="text-primary">{{cats.course_count}}</small>
+                            <small class="text-primary">{{cats.course_count}} Courses</small>
                         </div>
                     </a>
                 </div>

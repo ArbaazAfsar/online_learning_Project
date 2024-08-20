@@ -85,6 +85,42 @@
 </div>
 <!-- Courses by Category End -->
 
+<!-- Testimonial Start -->
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center">
+            <h6 class="section-title bg-white text-center text-primary px-3">Testimonials</h6>
+            <h1 class="mb-5">Our Students Say!</h1>
+        </div>
+        <div class="testimonial-carousel position-relative">
+            {% for review in reviews %}
+            <div class="testimonial-item text-center">
+                <h5 class="mb-0">{{ review.user.username }}</h5>
+                <p>{{ review.user.profile.profession }}</p>
+                <div class="testimonial-text bg-light text-center p-4">
+                    <p class="mb-0">{{ review.content }}</p>
+                    <div class="rating mb-0">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <p class="mb-0">{{ review.rating }} / 5</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No testimonials yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Testimonial End -->
+
 <style>
     .carousel-item {
         position: relative;
@@ -144,6 +180,27 @@
             width: 8%;
         }
     }
+
+
+
+    .testimonial-carousel {
+        position: relative;
+    }
+    
+    .testimonial-item {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #f9f9f9;
+        margin: 10px;
+    }
+    
+    .testimonial-text {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
 </style>
 
 {% endblock content %}

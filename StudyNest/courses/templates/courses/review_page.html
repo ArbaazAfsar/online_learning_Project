@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Review Page{% endblock %}
+
+{% block heading %}
+<div class="container-fluid bg-primary py-5 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">Review Page</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+    .testimonial-carousel {
+        position: relative;
+    }
+    
+    .testimonial-item {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background: #f9f9f9;
+        margin: 10px;
+    }
+    
+    .testimonial-text {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    form {
+        background-color: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    }
+    
+    form input[type="text"],
+    form input[type="file"],
+    form textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+    }
+    
+    form button {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+    
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+</style>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="container mt-5">
+    <h2 class="mb-4">Upload Category</h2>
+    <form method="post" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary mt-3">Upload</button>
+    </form>
+</div>
+
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center">
+            <h6 class="section-title bg-white text-center text-primary px-3">Testimonials</h6>
+            <h1 class="mb-5">Our Students Say!</h1>
+        </div>
+        <div class="testimonial-carousel position-relative">
+            {% for review in reviews %}
+            <div class="testimonial-item text-center">
+                <h5 class="mb-0">{{ review.user.username }}</h5>
+                <p>{{ review.user.profile.profession }}</p>
+                <div class="testimonial-text bg-light text-center p-4">
+                    <p class="mb-0">{{ review.content }}</p>
+                    <div class="rating mb-0">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <p class="mb-0">{{ review.rating }} / 5</p>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>No testimonials yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        $(".testimonial-carousel").owlCarousel({
+            items: 1,  // Number of items to display
+            loop: true,
+            autoplay: true,
+            autoplayTimeout: 5000,
+            smartSpeed: 500
+        });
+    });
+</script>
+{% endblock %}

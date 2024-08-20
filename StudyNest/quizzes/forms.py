@@ -30,7 +30,7 @@ class ChoiceForm(forms.ModelForm):
         model = Choice
         fields = ['choice_text', 'is_correct']
 
-# Create a formset for up to 20 questions
+
 QuestionFormSet = modelformset_factory(Question, form=QuestionForm)
 
 # Create a formset for choices associated with each question
