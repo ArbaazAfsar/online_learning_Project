@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from django.views.generic import ListView
+from django.db.models import Count
 
 
 def superuser_required(view_func):
@@ -34,10 +35,22 @@ def course_category(request):
 def course_detail(request, foo):
     foo = foo.replace('-', ' ')
     category_obj = get_object_or_404(CourseCategory, name=foo)
-    courses = Course.objects.filter(category=category_obj)
+    
+    # Annotate courses with enrollment_count (number of enrollments) and lecture_count (number of lectures)
+    courses = Course.objects.filter(category=category_obj).annotate(
+        enrollment_count=Count('enrollments'),
+        lecture_count=Count('lecture')
+    )
+    
     enrolled_courses = {course.id: Enrollment.objects.filter(user=request.user, course=course).exists() for course in courses}
     
-    return render(request, 'courses/courses.html', {'courses': courses, 'category_obj': category_obj, 'enrolled_courses': enrolled_courses})
+    return render(request, 'courses/courses.html', {
+        'courses': courses,
+        'category_obj': category_obj,
+        'enrolled_courses': enrolled_courses
+    })
+
+
 
 @login_required(login_url='/login/')
 def enroll_course(request, course_id):

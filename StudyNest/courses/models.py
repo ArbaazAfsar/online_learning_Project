@@ -27,7 +27,11 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
-   
+    def student_count(self):
+        return self.enrollments.count()
+
+    def lecture_count(self):
+        return self.lecture_set.count()
     
 
 class Lecture(models.Model):
