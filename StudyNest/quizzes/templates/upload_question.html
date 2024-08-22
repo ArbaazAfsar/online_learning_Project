@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Upload Question{% endblock %}
+{% load form_filters %}
+
 {% block heading %}
 <div class="container-fluid bg-primary py-5 mb-5 page-header">
     <div class="container py-5">
@@ -23,92 +24,32 @@
     <form method="POST" id="question-form">
         {% csrf_token %}
 
-        <!-- Display question form errors -->
-        {% if question_form_errors %}
-            <div class="alert alert-danger">
-                <h4>Question Form Errors:</h4>
-                <ul>
-                    {% for field, errors in question_form_errors.items %}
-                        <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
-                    {% endfor %}
-                </ul>
+        <!-- Render the question form -->
+        <div class="qus" id="question-template">
+            {{ question_form.as_p }}
+            
+            <!-- Render the choice formset -->
+            <h4>Choices:</h4>
+            <div id="choices-container">
+                {{ choice_formset.management_form }}
+                {% for choice_form in choice_formset %}
+                    <div class="mb-3">
+                        {{ choice_form.as_p }}
+                    </div>
+                {% endfor %}
             </div>
-        {% endif %}
-
-        <!-- Display choice formset errors -->
-        {% if choice_formset_errors %}
-            <div class="alert alert-danger">
-                <h4>Choice Form Errors:</h4>
-                <ul>
-                    {% for form_errors in choice_formset_errors %}
-                        {% for field, errors in form_errors.items %}
-                            <li><strong>{{ field }}:</strong> {{ errors|join:", " }}</li>
-                        {% endfor %}
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-
-            <!-- Render the question form -->
-            <div class="qus" id="question-template">
-                <div class="mb-3">
-                    <label for="{{ question_form.question_text.id_for_label }}">Question Text</label>
-                    {{ question_form.question_text }}
-                </div>
-                <div class="mb-3">
-                    <label for="{{ question_form.marks.id_for_label }}">Marks</label>
-                    {{ question_form.marks }}
-                </div>
-                
-                <!-- Render the choice formset -->
-                <h4>Choices:</h4>
-                <div id="choices-container">
-                    {{ choice_formset.management_form }}
-                    {% for choice_form in choice_formset %}
-                        <div class="mb-3">
-                            {{ choice_form.as_p }}
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-    
-        <br>
-
-        <a type="button" class="btn btn-secondary" href="{% url 'question_list' quiz.course.id quiz.id %}">Show All Questions</a>
-        <button type="submit" class="btn btn-primary">Upload Question</button>
-
-        <br>
-        <br>
-        <br>
+        </div>
         
         <div id="questions-container">
-            <h2>All uploaded questions in {{ quiz.title }}</h2>
-            <br>
-            <br>
-            <!-- Display existing questions and their choices -->
-            {% for question in quiz.questions.all %}
-            <div class="card mb-4">
-                <div class="card-header">
-                    <strong>Question {{ forloop.counter }}:</strong> {{ question.question_text }}
-                </div>
-                <div class="card-body">
-                    <p><strong>Marks:</strong> {{ question.marks }}</p>
-                    <h5>Choices:</h5>
-                    <ul class="list-group">
-                        {% for choice in question.choices.all %}
-                            <li class="list-group-item{% if choice.is_correct %} list-group-item-success{% endif %}">
-                                {{ choice.choice_text }}
-                                {% if choice.is_correct %}
-                                    <span class="badge bg-success">Correct</span>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            {% endfor %}
+            <!-- This is where new questions will be added -->
         </div>
 
+        <a type="button" class="btn btn-secondary" href="{% url 'quiz_detail' course_id=quiz.course.id quiz_id=quiz.id %}">Show All Questions</a>
+        <button type="submit" class="btn btn-primary">Upload Question</button>
     </form>
 </div>
+
+
+
+
 {% endblock %}

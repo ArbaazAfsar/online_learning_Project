@@ -15,5 +15,9 @@ urlpatterns = [
     path('categories/', views.manage_categories, name='manage_categories'),  # No leading slash
     path('categories/edit/<int:category_id>/', views.edit_category, name='edit_category'),
     path('categories/delete/<int:category_id>/', views.delete_category, name='delete_category'),
+    path('courses/<int:course_id>/lectures/manage/', views.manage_lectures, name='manage_lectures'),
+    path('lectures/<int:lecture_id>/edit/', views.edit_lecture, name='edit_lecture'),
+    path('lectures/<int:lecture_id>/delete/', views.delete_lecture, name='delete_lecture'),
+    path('courses/<int:course_id>/lectures/upload/', views.upload_lecture, name='upload_lecture'),
     
 ]

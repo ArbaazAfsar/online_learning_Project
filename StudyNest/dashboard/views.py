@@ -171,7 +171,7 @@ def edit_lecture(request, lecture_id):
         # Instantiate the form with the lecture instance for GET requests
         form = LectureForm(instance=lecture)
     
-    return render(request, 'courses/edit_lecture.html', {'form': form, 'lecture': lecture})
+    return render(request, 'confirm_delete.html', {'form': form, 'lecture': lecture})
 
 
 @login_required
@@ -181,7 +181,7 @@ def delete_lecture(request, lecture_id):
         course_id = lecture.course.id
         lecture.delete()
         return redirect('lecture_detail', pk=course_id)
-    return render(request, 'courses/confirm_delete.html', {'lecture': lecture})
+    return render(request, 'confirm_delete.html', {'lecture': lecture})
 
 def upload_lecture(request, course_id):
     course = get_object_or_404(Course, id=course_id)
