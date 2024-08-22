@@ -74,15 +74,16 @@
                                     <a href="{% url 'manage_courses' %}" class="dropdown-item">Manage Courses</a>
                                     <a href="{% url 'quiz_list' %}" class="dropdown-item">Manage Quiz</a>
                                     <a href="{% url 'manage_users' %}" class="dropdown-item">Manage Users</a>
-                                    <a href="{% url 'upload_category' %}" class="dropdown-item">Upload Category</a>
+                                    <a href="{% url 'manage_categories' %}" class="dropdown-item">Manage categories</a>
                                     <a href="{% url 'review_management' %}" class="dropdown-item">Manage Reviews</a>
                                     <a href="{% url 'admin:index' %}" class="dropdown-item">Admin Panel</a>
                                 </div>
                             </div>
                             {% else %}
                         <a href="{% url 'enrolled_courses' %}" class="nav-item nav-link">Enrolled Courses</a>
-                        <a href="{% url 'reviews' %}" class="nav-item nav-link">Reviews</a>
+                        
                     {% endif %}
+                    <a href="{% url 'reviews' %}" class="nav-item nav-link">Reviews</a>
                     <a href="{% url 'logout' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Logout</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-primary py-4 px-lg-5 d-none d-lg-block">Login</a>

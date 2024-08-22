@@ -22,8 +22,21 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="mb-4">Manage Courses</h2>
+    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+        <h2 class="mb-4">Upload Courses</h2>
     <a href="{% url 'upload_course' %}" class="btn btn-primary mb-4">Upload New Course</a>
+        <br>
+        <br>
+
+    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+        <h6 class="section-title bg-white text-center text-primary px-3">Courses</h6>
+        <h1 class="mb-5">Manage Courses</h1>
+    </div>
+
+
+
+
+    
     
     {% if courses %}
     <div class="row">

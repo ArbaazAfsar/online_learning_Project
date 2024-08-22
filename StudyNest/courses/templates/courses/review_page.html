@@ -11,6 +11,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb justify-content-center">
                         <li class="breadcrumb-item"><a class="text-white" href="{% url 'home' %}">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Review Page</li>
                     </ol>
                 </nav>
             </div>
@@ -22,21 +23,42 @@
 {% block content %}
 <style>
     .testimonial-carousel {
-        position: relative;
+        margin-top: 30px;
     }
-    
+
     .testimonial-item {
         padding: 20px;
-        border: 1px solid #ddd;
+        border: 1px solid #e1e1e1;
         border-radius: 8px;
-        background: #f9f9f9;
+        background: #f8f9fa;
         margin: 10px;
+        box-shadow: none; /* Optional: Remove box-shadow */
+        transition: background 0.3s ease;
+        text-align: center;
     }
-    
+
+    .testimonial-item:hover {
+        background: #e9ecef; /* Lighten background on hover */
+    }
+
     .testimonial-text {
-        background: #ffffff;
-        padding: 20px;
-        border-radius: 8px;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #ffffff;
+        max-height: 150px; /* Set a max height */
+        overflow-y: auto; /* Allow vertical scrolling if content overflows */
+        word-wrap: break-word; /* Ensure long words wrap */
+    }
+
+    .rating {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .rating i {
+        margin: 0 2px;
     }
 
     form {
@@ -45,7 +67,7 @@
         border-radius: 10px;
         box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     }
-    
+
     form input[type="text"],
     form input[type="file"],
     form textarea {
@@ -55,7 +77,7 @@
         border: 1px solid #ced4da;
         border-radius: 5px;
     }
-    
+
     form button {
         width: 100%;
         padding: 12px;
@@ -63,37 +85,35 @@
         font-weight: bold;
         border-radius: 5px;
     }
-    
+
     .container {
         max-width: 600px;
         margin: 0 auto;
     }
-
 </style>
-
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+<!-- Review Upload Form -->
 <div class="container mt-5">
-    <h2 class="mb-4">Upload Category</h2>
+    <h2 class="mb-4">Submit Your Review</h2>
     <form method="post" enctype="multipart/form-data" class="bg-light p-4 rounded shadow-sm">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-primary mt-3">Upload</button>
+        <button type="submit" class="btn btn-primary mt-3">Submit Review</button>
     </form>
 </div>
 
-<div class="container-xxl py-5">
+<!-- Testimonial Start -->
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
     <div class="container">
         <div class="text-center">
-            <h6 class="section-title bg-white text-center text-primary px-3">Testimonials</h6>
+            <h6 class="section-title bg-white text-center text-primary px-3">Testimonial</h6>
             <h1 class="mb-5">Our Students Say!</h1>
-        </div>
-        <div class="testimonial-carousel position-relative">
+            
             {% for review in reviews %}
-            <div class="testimonial-item text-center">
+            <div class="testimonial-item text-center mb-4">
                 <h5 class="mb-0">{{ review.user.username }}</h5>
-                <p>{{ review.user.profile.profession }}</p>
                 <div class="testimonial-text bg-light text-center p-4">
                     <p class="mb-0">{{ review.content }}</p>
                     <div class="rating mb-0">
@@ -107,6 +127,7 @@
                         <p class="mb-0">{{ review.rating }} / 5</p>
                     </div>
                 </div>
+                
             </div>
             {% empty %}
             <p>No testimonials yet.</p>
@@ -114,10 +135,13 @@
         </div>
     </div>
 </div>
+<!-- Testimonial End -->
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/owl.carousel/2.3.4/owl.carousel.min.js"></script>
 <script>
     $(document).ready(function(){
-        $(".testimonial-carousel").owlCarousel({
+        $(".owl-carousel").owlCarousel({
             items: 1,  // Number of items to display
             loop: true,
             autoplay: true,

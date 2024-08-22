@@ -27,25 +27,19 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
-    def student_count(self):
-        return self.enrollments.count()
+   
     
 
 class Lecture(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='lectures')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    description = models.TextField(blank=True)
-    video_url = models.URLField(blank=True, null=True)
-    video_file = models.FileField(upload_to='lectures/videos/', blank=True, null=True, validators=[FileExtensionValidator(['mp4', 'mov', 'avi'])])
+    description = models.TextField()
+    video_file = models.FileField(upload_to='lectures/', blank=True, null=True)
     order = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def has_video(self):
-        return bool(self.video_url or self.video_file)
-
     def __str__(self):
         return self.title
-    
     
     
 class Enrollment(models.Model):

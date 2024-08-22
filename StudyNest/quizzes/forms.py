@@ -34,6 +34,12 @@ class ChoiceForm(forms.ModelForm):
 QuestionFormSet = modelformset_factory(Question, form=QuestionForm)
 
 # Create a formset for choices associated with each question
-ChoiceFormSet = inlineformset_factory(Question, Choice, form=ChoiceForm, extra=4, can_delete=True)
+ChoiceFormSet = inlineformset_factory(
+    Question, 
+    Choice, 
+    form=ChoiceForm, 
+    extra=4, 
+    can_delete=True
+)
 ChoiceFormSet0 = inlineformset_factory(Question, Choice, form=ChoiceForm, extra=0, can_delete=True)
 

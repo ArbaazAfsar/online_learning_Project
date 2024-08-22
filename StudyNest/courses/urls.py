@@ -15,9 +15,6 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
     path('reviews/', views.review_view, name='reviews'),
-    path('manage_lectures/<int:course_id>/', views.manage_lectures, name='manage_lectures'),
-    path('lecture/<int:lecture_id>/edit/', views.edit_lecture, name='edit_lecture'),
-    path('lecture/<int:lecture_id>/delete/', views.delete_lecture, name='delete_lecture'),
     path('courses/<int:course_id>/quizzes/', views.course_quizzes, name='course_quizzes'),
     
    

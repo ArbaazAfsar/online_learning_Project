@@ -124,50 +124,8 @@ def user_logout(request):
 
 @never_cache
 @login_required
-@user_passes_test(lambda u: u.is_superuser)
-def manage_lectures(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
-    
-    if request.method == 'POST':
-        form = LectureForm(request.POST)
-        if form.is_valid():
-            lecture = form.save(commit=False)
-            lecture.course = course
-            lecture.save()
-            return redirect('lecture_detail', pk=course_id)
-    else:
-        form = LectureForm()
-
-    lectures = Lecture.objects.filter(course=course)
-    return render(request, 'courses/manage_lectures.html', {'course': course, 'lectures': lectures, 'form': form})
 
 
-@login_required
-def edit_lecture(request, lecture_id):
-    # Fetch the lecture object
-    lecture = get_object_or_404(Lecture, id=lecture_id)
-    
-    if request.method == 'POST':
-        # Instantiate the form with POST data and any uploaded files
-        form = LectureForm(request.POST, request.FILES, instance=lecture)
-        if form.is_valid():
-            form.save()
-            return redirect('lecture_detail', pk=lecture.course.id)
-    else:
-        # Instantiate the form with the lecture instance for GET requests
-        form = LectureForm(instance=lecture)
-    
-    return render(request, 'courses/edit_lecture.html', {'form': form, 'lecture': lecture})
-
-
-@login_required
-def delete_lecture(request, lecture_id):
-    lecture = get_object_or_404(Lecture, id=lecture_id)
-    if request.method == 'POST':
-        course_id = lecture.course.id
-        lecture.delete()
-        return redirect('lecture_detail', pk=course_id)
-    return render(request, 'courses/confirm_delete.html', {'lecture': lecture})
 
 @login_required
 def review_view(request):

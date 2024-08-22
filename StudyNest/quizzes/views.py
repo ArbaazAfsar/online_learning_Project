@@ -193,30 +193,38 @@ def upload_quiz(request):
         
 
 def upload_question(request, quiz_id):
-    quiz = Quiz.objects.get(id=quiz_id)
-    
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+
     if request.method == 'POST':
         question_form = QuestionForm(request.POST)
-        print(question_form)
-        if question_form.is_valid():
+        choice_formset = ChoiceFormSet(request.POST, prefix='choices')
+        
+        if question_form.is_valid() and choice_formset.is_valid():
             question = question_form.save(commit=False)
-            question.quiz = quiz
+            question.quiz = quiz  # Set the quiz field here
             question.save()
-            choice_formset = ChoiceFormSet(request.POST, instance=question)
-            if choice_formset.is_valid():
-                choice_formset.save()
-                messages.success(request, 'Question and choices uploaded successfully! add another question')
-                # Assume that you have a way to get course_id related to the quiz
-                course_id = quiz.course.id
-                return redirect('upload_question', quiz_id=quiz.id)
-                # return redirect('quiz_detail', course_id=course_id, quiz_id=quiz.id)
-            else:
-                messages.error(request, 'There was an error with the choices.')
+            
+            # Save choices
+            for choice_form in choice_formset:
+                if choice_form.cleaned_data.get('choice_text'):
+                    choice = choice_form.save(commit=False)
+                    choice.question = question
+                    choice.save()
+
+            messages.success(request, 'Question and choices uploaded successfully!')
+            return redirect('upload_question', quiz_id=quiz_id)
         else:
-            messages.error(request, 'There was an error with the question.')
+            messages.error(request, 'There was an error with the form submission.')
+            return render(request, 'upload_question.html', {
+                'quiz': quiz,
+                'question_form': question_form,
+                'choice_formset': choice_formset,
+                'question_form_errors': question_form.errors,
+                'choice_formset_errors': choice_formset.errors,
+            })
     else:
         question_form = QuestionForm()
-        choice_formset = ChoiceFormSet()
+        choice_formset = ChoiceFormSet(prefix='choices', queryset=Choice.objects.none())
 
     return render(request, 'upload_question.html', {
         'quiz': quiz,
@@ -224,8 +232,9 @@ def upload_question(request, quiz_id):
         'choice_formset': choice_formset,
     })
     
- 
- 
+    
+    
+    
 def course_quizzes_view(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     quizzes = Quiz.objects.filter(course=course)

@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404, redirect
-from courses.forms import CategoryForm,CourseForm, CategoryForm,ReviewForm
+from courses.forms import CategoryForm,CourseForm, CategoryForm,ReviewForm,LectureForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
-from courses.models import Course,Review
+from courses.models import Course,Review, Lecture, CourseCategory
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -78,7 +78,31 @@ def upload_category(request):
 
     return render(request, 'upload_category.html', {'form': form})
 
+@never_cache
+@superuser_required
+def manage_categories(request):
+    categories = CourseCategory.objects.all()
+    return render(request, 'manage_categories.html', {'categories': categories})
 
+def edit_category(request, category_id):
+    category = get_object_or_404(CourseCategory, id=category_id)
+    if request.method == 'POST':
+        form = CategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            form.save()
+            return redirect('manage_categories')
+    else:
+        form = CategoryForm(instance=category)
+    return render(request, 'edit_category.html', {'form': form, 'category': category})
+
+def delete_category(request, category_id):
+    category = get_object_or_404(CourseCategory, id=category_id)
+    if request.method == 'POST':
+        category.delete()
+        return redirect('manage_categories')
+    return render(request, 'delete_category_confirm.html', {'category': category})
+
+@never_cache
 @login_required
 def edit_course(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
@@ -92,7 +116,7 @@ def edit_course(request, course_id):
         form = CourseForm(instance=course)
     
     return render(request, 'edit_course.html', {'form': form, 'course': course})
-
+@never_cache
 @login_required
 def delete_course(request, course_id):
     course = get_object_or_404(Course, id=course_id, instructor=request.user)
@@ -101,7 +125,7 @@ def delete_course(request, course_id):
         return redirect('manage_courses')
     return render(request, 'delete_course_confirm.html', {'course': course})
 
-
+@never_cache
 @login_required
 def upload_course(request):
     if request.method == 'POST':
@@ -114,6 +138,66 @@ def upload_course(request):
     else:
         form = CourseForm()
     return render(request, 'upload_course.html', {'form': form})
+
+def manage_lectures(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    
+    if request.method == 'POST':
+        form = LectureForm(request.POST)
+        if form.is_valid():
+            lecture = form.save(commit=False)
+            lecture.course = course
+            lecture.save()
+            return redirect('lecture_detail', pk=course_id)
+    else:
+        form = LectureForm()
+
+    lectures = Lecture.objects.filter(course=course)
+    return render(request, 'manage_lectures.html', {'course': course, 'lectures': lectures, 'form': form})
+
+
+@login_required
+def edit_lecture(request, lecture_id):
+    # Fetch the lecture object
+    lecture = get_object_or_404(Lecture, id=lecture_id)
+    
+    if request.method == 'POST':
+        # Instantiate the form with POST data and any uploaded files
+        form = LectureForm(request.POST, request.FILES, instance=lecture)
+        if form.is_valid():
+            form.save()
+            return redirect('lecture_detail', pk=lecture.course.id)
+    else:
+        # Instantiate the form with the lecture instance for GET requests
+        form = LectureForm(instance=lecture)
+    
+    return render(request, 'courses/edit_lecture.html', {'form': form, 'lecture': lecture})
+
+
+@login_required
+def delete_lecture(request, lecture_id):
+    lecture = get_object_or_404(Lecture, id=lecture_id)
+    if request.method == 'POST':
+        course_id = lecture.course.id
+        lecture.delete()
+        return redirect('lecture_detail', pk=course_id)
+    return render(request, 'courses/confirm_delete.html', {'lecture': lecture})
+
+def upload_lecture(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    
+    if request.method == 'POST':
+        form = LectureForm(request.POST, request.FILES)
+        if form.is_valid():
+            lecture = form.save(commit=False)
+            lecture.course = course
+            lecture.save()
+            messages.success(request, 'Lecture uploaded successfully.')
+            return redirect('manage_lectures', course_id=course_id)
+    else:
+        form = LectureForm()
+
+    return render(request, 'upload_lecture.html', {'form': form, 'course': course})
 
 
 @login_required

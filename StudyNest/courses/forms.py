@@ -34,7 +34,14 @@ class CategoryForm(forms.ModelForm):
 class LectureForm(forms.ModelForm):
     class Meta:
         model = Lecture
-        fields = ['title', 'description', 'video_url', 'video_file', 'order']
+        fields = ['title', 'description', 'video_file', 'order']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Lecture Title'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Lecture Description'}),
+            # 'video_url': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'Video URL'}),
+            'video_file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'order': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Order'}),
+        }
         
         
 class ReviewForm(forms.ModelForm):

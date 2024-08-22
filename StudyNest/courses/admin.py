@@ -33,3 +33,4 @@ class ReviewAdmin(admin.ModelAdmin):
 # Registering models with the admin site
 admin.site.register(Course, CourseAdmin)
 admin.site.register(CourseCategory, CourseCategoryAdmin)
+admin.site.register(Lecture)
